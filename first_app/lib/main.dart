@@ -8,22 +8,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-            primarySwatch: Colors.blue,
-            primaryColor: Colors.amber,
-            textTheme: TextTheme(
-              bodyText2: TextStyle(color: Colors.purple)
-            )
-            ),
-        //home: MyHomePage(title: 'Ronachai Pop Cate'),
-        initialRoute: '/fourth',
-        routes: <String, WidgetBuilder>{
-          '/first': (context)=> FirstPage(),
-          '/second': (context)=> SecondPage(),
-          '/third': (context)=> ThirdPage(),
-          '/fourth' :(context)=> FourthPage(),
-        });
+    title: 'Flutter Demo',
+    theme: ThemeData(
+        primarySwatch: Colors.red,
+        primaryColor: Colors.amber,
+        textTheme: TextTheme(
+          bodyText2: TextStyle(color: Colors.purple)
+        )
+        ),
+    //home: MyHomePage(title: 'Ronachai Pop Cate'),
+    initialRoute: '/second',
+    routes: <String, WidgetBuilder>{
+      '/first': (context)=> FirstPage(),
+      '/second': (context)=> SecondPage(),
+      '/third': (context)=> ThirdPage(),
+      '/fourth' :(context)=> FourthPage(),
+    });
   }
 }
 
@@ -213,7 +213,6 @@ class SecondPage extends StatelessWidget {
                  Text('FeMale'),
                ]
               ),
-               
             ],
           ),
           ],
@@ -250,7 +249,6 @@ class ThirdPage extends StatelessWidget {
           children: [
             Center(
               child: Text('Cloud'),
-
             ),
             Center(
               child: Text('Umbrella'),
