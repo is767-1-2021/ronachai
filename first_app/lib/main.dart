@@ -1,3 +1,4 @@
+import 'package:first_app/pages/seventh_page.dart';
 import 'package:flutter/material.dart';
 
 import 'pages/fifth_page.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
       '/4' :(context)=> FourthPage(),
       '/5' :(context)=> FifthPage(),
       '/6' :(context)=> SixPage(),
+      '/7' :(context)=> SeventhPage(),
     });
   }
 }

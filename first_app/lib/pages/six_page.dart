@@ -87,9 +87,9 @@ class _MyCustomFormState extends State<MyCustomForm> {
             onPressed: (){
               if(_formkey.currentState!.validate()){
                 _formkey.currentState!.save();//การเอาค่าไปใส่ในตัวแปรที่เก็บไว้
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Hoorayyyy = $_first_name $_last_name $_age'),
-                ));
+
+                var response = 'Hoorayyyy = $_first_name $_last_name $_age';
+                Navigator.pop(context,response);
               }
             },
             child: Text('Validate'),
