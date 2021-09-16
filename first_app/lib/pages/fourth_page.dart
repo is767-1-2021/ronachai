@@ -47,14 +47,15 @@ class ProductTile extends StatelessWidget {
     return GestureDetector(
       onTap: (){
         Navigator.push(context, 
-          MaterialPageRoute(builder: (context)=> ProductDetail(items: items))
+          MaterialPageRoute(
+            builder: (context)=> ProductDetail(items: items))
         );
       },
       child: Container(
         height: 100,
         color: Colors.amber[items.colorShade],
         child: Center(
-          child:Text('Entry ${items.name}'),
+          child:Text('${items.name}'),
         ),
       ),
       
