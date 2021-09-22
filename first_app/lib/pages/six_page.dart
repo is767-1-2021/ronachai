@@ -1,4 +1,6 @@
+import 'package:first_app/models/first_form_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SixPage extends StatelessWidget {
 
@@ -27,6 +29,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
 
   @override
   Widget build(BuildContext context) {
+    print("Value="+context.read<FirstFormModel>().age.toString());
     return Form(
       key: _formkey,
       child: Column(
@@ -47,6 +50,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
             onSaved: (value){
               _first_name = value;
             },
+            initialValue:  context.read<FirstFormModel>().firstName,
           ),
           TextFormField(
             decoration: InputDecoration(
@@ -63,6 +67,7 @@ class _MyCustomFormState extends State<MyCustomForm> {
              onSaved: (value){
                _last_name = value;
              },
+             initialValue:  context.read<FirstFormModel>().lastName,
           ),
           TextFormField(
             decoration: InputDecoration(
@@ -82,14 +87,19 @@ class _MyCustomFormState extends State<MyCustomForm> {
              onSaved: (value){
                _age = int.parse(value!);
              },
+             initialValue:  (context.read<FirstFormModel>().age == null) ? '': context.read<FirstFormModel>().age.toString(),
+             
           ),
           ElevatedButton(
             onPressed: (){
               if(_formkey.currentState!.validate()){
-                _formkey.currentState!.save();//การเอาค่าไปใส่ในตัวแปรที่เก็บไว้
+                _formkey.currentState!.save();
+                
+                context.read<FirstFormModel>().firstName = _first_name;
+                context.read<FirstFormModel>().lastName = _last_name;
+                context.read<FirstFormModel>().age = _age;
 
-                var response = 'Hoorayyyy = $_first_name $_last_name $_age';
-                Navigator.pop(context,response);
+                Navigator.pop(context);
               }
             },
             child: Text('Validate'),
