@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'dash_board_page.dart';
 import 'home_page.dart';
+import 'team_member_page.dart';
+
 
 class BottomNavScreen extends StatefulWidget {
-  const BottomNavScreen({ Key? key }) : super(key: key);
+  const BottomNavScreen({Key? key}) : super(key: key);
 
   @override
   _BottomNavScreenState createState() => _BottomNavScreenState();
@@ -15,11 +17,10 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     HomeScreen(),
     DashboardScreen(),
     Scaffold(),
-    Scaffold(),
-    Scaffold(),
+    TeamMemberScreen(),
   ];
   int _currentIndex = 0;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +35,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey,
         elevation: 0.0,
-        items: [Icons.home, Icons.insert_chart, Icons.event_note, Icons.info]
+        items: [Icons.home, Icons.insert_chart, Icons.event_note, Icons.group]
             .asMap()
             .map((key, value) => MapEntry(
                   key,

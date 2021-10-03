@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/data/data.dart';
 import 'package:icovid/pages/booking_step1_page.dart';
+import 'package:icovid/pages/login_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({ Key? key }) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -13,21 +14,27 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final screenHeight  = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF473F97),
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Icons.menu),
-          iconSize: 28.0,
-          onPressed: (){},
+          icon: Icon(Icons.person_outline),
+          iconSize: 30.0,
+          onPressed: () {},
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications_none),
+            icon: Icon(Icons.logout),
             iconSize: 28.0,
-            onPressed: (){},
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => LogInScreen()),
+                (route) => false
+              );
+            },
           ),
         ],
       ),
@@ -41,9 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-  Size get  PreferredSize => Size.fromHeight(kToolbarHeight);
 
-  SliverToBoxAdapter _headerSection(double screenHeight){
+  Size get PreferredSize => Size.fromHeight(kToolbarHeight);
+
+  SliverToBoxAdapter _headerSection(double screenHeight) {
     return SliverToBoxAdapter(
       child: Container(
         padding: EdgeInsets.all(20.0),
@@ -51,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Color(0xFF473F97),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(40),
-            bottomRight:Radius.circular(40),
+            bottomRight: Radius.circular(40),
           ),
         ),
         child: Column(
@@ -61,24 +69,22 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('คุณรู้สึกป่วยหรือไม่?',
+                Text(
+                  'คุณรู้สึกป่วยหรือไม่?',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.w600
-                  ),
+                      color: Colors.white,
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w600),
                 ),
               ],
             ),
             SizedBox(height: screenHeight * 0.01),
-             Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('หากคุณมีอาการเกี่ยวกับ Covid-19 เราแนะนำให้คุณเข้ารับการตรวจ เพื่อคนที่คุณรัก',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 15.0
-                  ),
+                Text(
+                  'หากคุณมีอาการเกี่ยวกับ Covid-19 เราแนะนำให้คุณเข้ารับการตรวจ เพื่อคนที่คุณรัก',
+                  style: TextStyle(color: Colors.white70, fontSize: 15.0),
                 ),
               ],
             ),
@@ -92,9 +98,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     horizontal: 20.0,
                   ),
                   onPressed: () {
-                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BookingStep1Screen())
-                    );
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BookingStep1Screen()));
                   },
                   color: Colors.green,
                   shape: RoundedRectangleBorder(
@@ -121,14 +128,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  SliverToBoxAdapter _preventionTipsSection(double screenHeight){
+  SliverToBoxAdapter _preventionTipsSection(double screenHeight) {
     return SliverToBoxAdapter(
       child: Container(
         padding: EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('แนวทางป้องกัน',
+            Text(
+              'แนวทางป้องกัน',
               style: TextStyle(
                 fontSize: 22.0,
                 fontWeight: FontWeight.w600,
@@ -138,23 +146,22 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: prevention
-              .map((e) => Column(
-                children: [
-                  Image.asset(
-                     e.keys.first,
-                    height: screenHeight * 0.12,
-                  ),
-                  SizedBox(height: screenHeight * 0.015),
-                    Text(
-                      e.values.first,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w500
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                ],
-              )).toList(),
+                  .map((e) => Column(
+                        children: [
+                          Image.asset(
+                            e.keys.first,
+                            height: screenHeight * 0.12,
+                          ),
+                          SizedBox(height: screenHeight * 0.015),
+                          Text(
+                            e.values.first,
+                            style: TextStyle(
+                                fontSize: 16.0, fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ))
+                  .toList(),
             ),
           ],
         ),
@@ -162,22 +169,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  SliverToBoxAdapter _BookingSection(double screenHeight){
+  SliverToBoxAdapter _BookingSection(double screenHeight) {
     return SliverToBoxAdapter(
       child: Container(
-        margin: EdgeInsets.symmetric(
-          vertical: 10.0,
-          horizontal: 20.0
-        ),
+        margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
         padding: EdgeInsets.all(10.0),
         height: screenHeight * 0.15,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFAD9FE4),  Color(0xFF473F97)],
-
-          ),
-          borderRadius: BorderRadius.circular(20.0)
-        ),
+            gradient: LinearGradient(
+              colors: [Color(0xFFAD9FE4), Color(0xFF473F97)],
+            ),
+            borderRadius: BorderRadius.circular(20.0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -189,10 +191,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   'จองคิวเลย !',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold
-                  ),
+                      color: Colors.white,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: screenHeight * 0.01),
                 Text(
@@ -210,6 +211,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 }
-

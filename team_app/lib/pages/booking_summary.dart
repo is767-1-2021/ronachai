@@ -1,10 +1,13 @@
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
-import 'package:icovid/pages/bottom_nav_screen.dart';
-import 'package:icovid/pages/home_page.dart';
+import 'package:icovid/models/booking_model.dart';
+import 'package:provider/provider.dart';
+
+import 'bottom_nav_page.dart';
 
 class BookingSummaryScreen extends StatefulWidget {
-  const BookingSummaryScreen({ Key? key }) : super(key: key);
+  const BookingSummaryScreen({Key? key}) : super(key: key);
 
   @override
   _BookingSummaryState createState() => _BookingSummaryState();
@@ -15,168 +18,156 @@ class _BookingSummaryState extends State<BookingSummaryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         title: Text('STEP 3 : รายละเอียดการจอง',style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-          color: iWhiteColor
+        title: Center(
+          child: Text(
+            'จองคิวเรียบร้อย',
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.w700, 
+              color: iWhiteColor
+            ),
           ),
         ),
+        automaticallyImplyLeading: false,
         backgroundColor: iBlueColor,
       ),
       body: Container(
-       padding: EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-          //  BarcodeGenerator(
-          //     witdth: 300,
-          //     height: 200,
-          //     backgroundColor: Colors.red,
-          //     fromString: "xxxxxxxx",
-          //     codeType: BarCodeType.kBarcodeFormatCode128,
-          //   )
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                color: iBlueColor,
-              ),
-              
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Barcode Generator',
-                style: TextStyle(
-                  color: iWhiteColor,
-                  backgroundColor: iBlueColor
-                ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Card(
-                  color: iWhiteColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text('รหัสบัตรประชาชน:XXXXXXXXX5412'),
-                  )
-                  ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: Row(
+        padding: EdgeInsets.all(8.0),
+        child: Consumer<BookingModel>(
+          builder: (context, form, child) {
+            return Container(
+              child: Column(
                 children: [
-                  Card(
-                    color: iWhiteColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text('ชื่อ:รณชัย'),
-                    )
+                  Text('กรุณาแสดง qrcode ให้เจ้าหน้าที่สแกน'),
+                  BarcodeWidget(
+                    margin: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    data:
+                        '${form.id_card} ${form.first_name} ${form.last_name} ${form.tel} ${form.hospital_name} ${form.booking_date} ${form.booking_time}',
+                    barcode: Barcode.qrCode(),
+                    color: iBlueColor,
                   ),
-                  Card(
-                    color: iWhiteColor,
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: Text(
+                      'คิวที่',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  Container(
+                    width: 20,
+                    child: Text(
+                      context.read<BookingModel>().queue_number.toString(),
+                      style: TextStyle(fontSize: 40, color: Colors.red),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
-                      child: Text('นามสกุล:จำศิล'),
-                    )
+                      child: Card(
+                        color: iWhiteColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                              'รหัสบัตรประชาชน: ${form.id_card.toString().substring(0, 3)}xxxxxxx${form.id_card.toString().substring(10, 13)}'),
+                        )
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Card(
+                        color: iWhiteColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text('ชื่อ: ${form.first_name}'),
+                        )
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Card(
+                        color: iWhiteColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text('นามสกุล: ${form.last_name}'),
+                        )
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Card(
+                        color: iWhiteColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                              'เบอร์โทร: ${form.tel.toString().substring(0, 3)}xxxx${form.tel.toString().substring(8, 10)}'),
+                        )
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Card(
+                        color: iWhiteColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text('สถานที่ตรวจ : ${form.hospital_name}'),
+                        )
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Card(
+                        color: iWhiteColor,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text('วันที่ตรวจ : ${form.booking_date}'),
+                        )
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 30),
+                    width: MediaQuery.of(context).size.width,
+                    height: 60,
+                    child: FlatButton(
+                      shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0),
+                      ),
+                      color: iBlueColor,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BottomNavScreen()
+                          )
+                        );
+                      },
+                      child: Text('กลับหน้าหลัก',
+                          style: TextStyle(fontSize: 20, color: iWhiteColor)),
+                    ),
                   ),
                 ],
               ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Card(
-                  color: iWhiteColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text('เบอร์โทร:XXXXXX5789'),
-                  )
-                  ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Card(
-                  color: iWhiteColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text('สถานที่ :โรงพยาบาลเกษมราษฏร์ประชาชื่น'),
-                  )
-                  ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Card(
-                  color: iWhiteColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text('วันที่ :21/09/2021'),
-                  )
-                  ),
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Card(
-                  color: iWhiteColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text('เวลา :09.00 - 10.00'),
-                  )
-                  ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: 30),
-              width: MediaQuery.of(context).size.width,
-              height: 60,
-              child: FlatButton(
-                shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30.0),
-                ),
-                color: iBlueColor,
-                onPressed: (){
-                  Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => BottomNavScreen())
-                  );
-                }, 
-                child: Text('กลับหน้าหลัก',
-                style: TextStyle(
-                fontSize: 20,
-                color: iWhiteColor)),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
-    // return ListView.builder(
-    //   itemCount: data_info.length,
-    //   itemBuilder: (context,pos){
-    //     return Padding(
-    //       padding: EdgeInsets.only(bottom: 16.0),
-    //       child: Card(
-    //         color: iWhiteColor,
-    //         child: Padding(
-    //           padding: EdgeInsets.symmetric(vertical: 24.0),
-    //           child: Text(data_info[pos].title),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
-
   }
 }

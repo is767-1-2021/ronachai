@@ -10,20 +10,19 @@ class FirstFormModel extends ChangeNotifier {
   set firstName(String? value) {
     this._firstName = value;
     notifyListeners();
-  } 
+  }
 
   get lastName => this._lastName;
 
-  set lastName( value) {
+  set lastName(value) {
     this._lastName = value;
     notifyListeners();
-  } 
+  }
 
   get age => this._age;
 
-  set age( value) {
+  set age(value) {
     this._age = value;
     notifyListeners();
-  } 
-
+  }
 }

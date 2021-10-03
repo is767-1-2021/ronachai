@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:icovid/Widgets/stats_grid.dart';
 import 'package:icovid/constants/color_constant.dart';
+import 'package:icovid/widgets/dashboard_grid.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({ Key? key }) : super(key: key);
+  const DashboardScreen({Key? key}) : super(key: key);
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -18,15 +18,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: Color(0xFF473F97),
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Icons.menu),
-          iconSize: 28.0,
-          onPressed: (){},
+          icon: Icon(Icons.person_outline),
+          iconSize: 30.0,
+          onPressed: () {},
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications_none),
             iconSize: 28.0,
-            onPressed: (){},
+            onPressed: () {},
           ),
         ],
       ),
@@ -34,11 +34,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         physics: ClampingScrollPhysics(),
         slivers: [
           _buildHeader(),
-          _buildStatusTabBar(),
+          //_buildStatusTabBar(),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             sliver: SliverToBoxAdapter(
-              child: StatsGrid(),
+              child: DashboardGrid(),
             ),
           ),
           SliverPadding(
@@ -48,7 +48,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-  SliverPadding _buildHeader(){
+
+  SliverPadding _buildHeader() {
     return SliverPadding(
       padding: EdgeInsets.all(20.0),
       sliver: SliverToBoxAdapter(
@@ -63,34 +64,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-  SliverToBoxAdapter _buildRegionToolbar(){
+
+  SliverToBoxAdapter _buildRegionToolbar() {
     return SliverToBoxAdapter(
       child: DefaultTabController(
-        length: 2, 
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20.0),
-          height: 50.0,
-          decoration: BoxDecoration(
-            color: Colors.white24,
-            borderRadius: BorderRadius.circular(25.0)
-          ),
-          child: TabBar(
-            tabs: [
-              Text('MyCountry'),
-              Text('Global')
-            ],
-            onTap: (index){},
-          ),
-        )
-      ),
+          length: 2,
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 20.0),
+            height: 50.0,
+            decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(25.0)),
+            child: TabBar(
+              tabs: [Text('MyCountry'), Text('Global')],
+              onTap: (index) {},
+            ),
+          )),
     );
   }
-  SliverPadding _buildStatusTabBar(){
+
+  SliverPadding _buildStatusTabBar() {
     return SliverPadding(
       padding: EdgeInsets.all(20.0),
       sliver: SliverToBoxAdapter(
         child: DefaultTabController(
-          length: 3, 
+          length: 3,
           child: TabBar(
             indicatorColor: Colors.transparent,
             labelStyle: TextStyle(
@@ -104,11 +102,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Text('วันนี้'),
               Text('เมื่อวาน'),
             ],
-            onTap: (index){},
+            onTap: (index) {},
           )
         ),
       ),
     );
   }
-
 }
