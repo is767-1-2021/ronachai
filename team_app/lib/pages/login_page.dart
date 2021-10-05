@@ -1,16 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:icovid/constants/color_constant.dart';
+import 'package:icovid/models/user_class.dart';
+import 'package:icovid/models/user_provider.dart';
 import 'package:icovid/widgets/login_form.dart';
 import 'package:icovid/widgets/primary_button.dart';
+import 'package:provider/provider.dart';
 
 import 'bottom_nav_page.dart';
+import 'hospital_home_page.dart';
+import 'list_user_page.dart';
+import 'patient_list_page.dart';
+import 'resetpass_page.dart';
+import 'signup_page.dart';
 
-class LogInScreen extends StatelessWidget {
+class LogInScreen extends StatefulWidget {
+  @override
+  _LogInScreenState createState() => _LogInScreenState();
+}
+
+class _LogInScreenState extends State<LogInScreen> {
   TextEditingController Email = TextEditingController();
   TextEditingController Password = TextEditingController();
   late int num = 0;
 
+  gotoHomePage(context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BottomNavScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<User> _userList = [];
+    if (context.read<UserProvider>().userList != null) {
+      _userList = context.read<UserProvider>().userList;
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -21,8 +49,8 @@ class LogInScreen extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color(0xFF473F97), //Colors.blue.shade800,
-                Color(0xFF473F97) //Colors.blue.shade600,
+                iBlueColor,
+                iBlueColor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.centerRight,
@@ -45,7 +73,7 @@ class LogInScreen extends StatelessWidget {
                         "i-Covid",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 40,
+                          fontSize: 36,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -54,27 +82,19 @@ class LogInScreen extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Text(
-                            "คุณเป็นสมาชิกแล้วหรือยัง?",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
                           GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => SignUpScreen(),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignUpScreen(),
+                                ),
+                              );
                             },
                             child: Text(
-                              "สมัครสมาชิก",
+                              "ผู้ใช้งานใหม่? กดลงทะเบียนตรงนี้",
                               style: TextStyle(
+                                color: Colors.amber[300],
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -110,18 +130,17 @@ class LogInScreen extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) =>
-                              //           ResetPasswordScreen()),
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ResetPasswordScreen()),
+                              );
                             },
                             child: Text(
                               'ลืมรหัสผ่าน?',
                               style: TextStyle(
-                                color:
-                                    Color(0xFF473F97), //Colors.blue.shade600,
+                                color: Colors.blue,
                                 fontSize: 14,
                                 decoration: TextDecoration.underline,
                                 decorationThickness: 1,
@@ -133,54 +152,52 @@ class LogInScreen extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BottomNavScreen(),
-                                ),
-                              );
-
-                              // if ((Email.text == "chavisa@gmail.com") &&
-                              //     (Password.text == "1234")) {
-                              //   print(Email.text + " pass " + Password.text);
-                              //   Navigator.pushReplacement(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //       builder: (context) => BottomNavScreen(),
-                              //     ),
-                              //   );
-                              // } else {
-                              //   print("error");
-                              //   num = num + 1;
-                              //   if (num > 3) {
-                              //     // Navigator.push(
-                              //     //   context,
-                              //     //   MaterialPageRoute(
-                              //     //     builder: (context) =>
-                              //     //         ResetPasswordScreen(),
-                              //     //   ),
-                              //     // );
-                              //   }
-                              //   // ScaffoldMessenger.of(context).showSnackBar(
-                              //   //   const SnackBar(
-                              //   //       content: Text(
-                              //   //           'Email or Password is not correct')),
-                              //   // );
-                              //   /*
-                              //   showDialog(
-                              //     context: context,
-                              //     builder: (BuildContext context) =>
-                              //         AlertDialog(
-                              //       title: Text('No Data Email And Password'),
-                              //     ),
-                              //   );
-
-                              //   print(
-                              //       Email.text + "  no data  " + Password.text);
-                              //   */
-                              // }
+                              if (Email.text.length ==0 ) {
+                                _showDialog(context, 'กรุณาระบุอีเมล์');
+                              } else if (Password.text.length == 0) {
+                                _showDialog(context, 'กรุณาระบุรหัสผ่าน');
+                              } else if (Email.text == 'admin' &&
+                                  Password.text == 'P@ssw0rd') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ListUser(),
+                                  ),
+                                );
+                              } else {
+                                if (CheckUsernameValid(_userList, Email.text, Password.text)) {
+                                  if(GetUserRole(_userList,Email.text,Password.text) == 1){ //ผู้ดูแลระบบ
+                                    Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => ListUser(),),
+                                    );
+                                  } else if(GetUserRole(_userList,Email.text,Password.text) == 2){//ผู้ใช้งานทั่วไป
+                                    Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => BottomNavScreen(),)
+                                    );
+                                  } else if(GetUserRole(_userList,Email.text,Password.text) == 3){//โรงพยาบาล
+                                    Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => HospitalHomeScreen(),)
+                                    );
+                                  } else if(GetUserRole(_userList,Email.text,Password.text) == 4){//สถานพยาบาลผู้ป่วยเฉพาะกิจ
+                                    Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) => PatientListPage(),)
+                                    );
+                                  } else if(GetUserRole(_userList,Email.text,Password.text) == 5){//ผู้ดูแลระบบของโรงพยาบาล
+                                    
+                                  } else if(GetUserRole(_userList,Email.text,Password.text) == 6){//ผู้ดูแลระบบของสถานพยาบาลผู้ป่วยเฉพาะกิจ
+                                    
+                                  } else {
+                                    _showDialog(context,
+                                      'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
+                                  }
+                                  
+                                } else {
+                                  _showDialog(context,
+                                      'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
+                                }
+                              }
                             },
-                            child: PrimaryButton(buttonText: 'เข้าสู่ระบบ'),
+                            child: PrimaryButton(buttonText: 'เข้าสู่ระบบ',buttonColor: iBlueColor),
                           ),
                           SizedBox(
                             height: 20,
@@ -189,24 +206,50 @@ class LogInScreen extends StatelessWidget {
                       ),
                     ),
                   ))
-
-              /*
-              Text(
-                "Or log in with",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              LoginOption(),
-              */
             ],
           ),
         ),
       ),
     );
   }
+}
+
+void _showDialog(BuildContext context, String text) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('แจ้งเตือน'),
+        content: Text(text),
+        actions: [
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('ตกลง'))
+        ],
+      );
+    },
+  );
+}
+
+bool CheckUsernameValid(
+    List<User> _userList, String _username, String _password) {
+  bool result = false;
+  for (int i = 0; i < _userList.length; i++) {
+    if (_userList[i].email == _username &&
+        _userList[i].password == _password) {
+      result = true;
+    }
+  }
+  return result;
+}
+int GetUserRole (List<User> _userList, String _username, String _password) {
+   int result = 0;
+   for (int i = 0; i < _userList.length; i++) {
+    if (_userList[i].email == _username &&_userList[i].password == _password) {
+      result = _userList[i].roleId!;
+    }
+  }
+  return result;
 }

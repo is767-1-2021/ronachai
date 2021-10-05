@@ -5,6 +5,8 @@ class ProfileModel extends ChangeNotifier {
   String? _first_name;
   String? _last_name;
   String? _tel;
+  String? _email;
+  String? _password;
 
   int? get id_card => this._id_card;
 
@@ -31,6 +33,20 @@ class ProfileModel extends ChangeNotifier {
 
   set tel(value) {
     this._tel = value;
+    notifyListeners();
+  }
+
+  get email => this._email;
+
+  set email(value) {
+    this._email = value;
+    notifyListeners();
+  }
+
+  get password => this._password;
+
+  set password (value) {
+    this._password = value;
     notifyListeners();
   }
 }

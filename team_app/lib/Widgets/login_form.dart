@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class LogInForm extends StatefulWidget {
@@ -18,7 +17,7 @@ class _LogInFormState extends State<LogInForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        buildInputForm('ชื่อผู้ใช้งาน', false, widget.email),
+        buildInputForm('อีเมล์', false, widget.email),
         buildInputForm('รหัสผ่าน', true, widget.password)
       ],
     );

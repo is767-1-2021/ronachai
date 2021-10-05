@@ -2,9 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/constants/font_sonstant.dart';
+import 'package:icovid/data/data.dart';
+import 'package:icovid/models/booking_list_model.dart';
 import 'package:icovid/models/booking_model.dart';
+import 'package:icovid/models/hospital_clas.dart';
 import 'package:icovid/pages/booking_summary.dart';
 import 'package:provider/provider.dart';
+
+import 'ubooking_list_page.dart';
 
 class BookingStep2Screen extends StatelessWidget {
   const BookingStep2Screen({Key? key}) : super(key: key);
@@ -14,7 +19,7 @@ class BookingStep2Screen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'STEP 2 : ข้อมูลจุดตรวจ',
+          'STEP 2 : ข้อมูลการรับบริการ',
           style: TextStyle(
               fontSize: 20, fontWeight: FontWeight.w700, color: iWhiteColor),
         ),
@@ -33,16 +38,14 @@ class Step2Custom extends StatefulWidget {
 }
 
 class _LogInCustomState extends State<Step2Custom> {
-  final _formkey = GlobalKey<State>();
+  final _formkey = GlobalKey<FormState>();
   int? _avaliableQueue;
+  int? _allQueue;
   int _queue_number = 0;
+  var _txtDate = TextEditingController();
   String? _dateSelected;
-  Hospitel? _selectHospitel;
-  List<Hospitel> hostpitelList = [
-    Hospitel(name: 'โรงพยาบาลเกษมราษฏร์ประชาชื่น', avaliableQueue: 10),
-    Hospitel(name: 'โรงพยาบาลบำรุงราษฎร์', avaliableQueue: 20),
-    Hospitel(name: 'โรงพยาบาลวิภาวดี', avaliableQueue: 30),
-  ];
+  Hospital? _selectHospitel;
+  String? _hosName;
 
   DateTime date = DateTime.now();
   TimeOfDay time = TimeOfDay.now();
@@ -61,6 +64,7 @@ class _LogInCustomState extends State<Step2Custom> {
       setState(() {
         date = datePicked;
         _dateSelected = '${date.day}/${date.month}/${date.year}';
+        _txtDate.text = '${date.day}/${date.month}/${date.year}';
         context.read<BookingModel>().booking_date =
             '${date.day}/${date.month}/${date.year}';
       });
@@ -70,21 +74,30 @@ class _LogInCustomState extends State<Step2Custom> {
   @override
   Widget build(BuildContext context) {
     _queue_number = context.read<BookingModel>().queue_number;
-    List<DropdownMenuItem<Hospitel>> items = hostpitelList.map((item) {
-      return DropdownMenuItem<Hospitel>(
-        child: Text(item.name),
-        value: item,
-      );
-    }).toList();
+    //Get data from provider
+   
+    // final value = context.watch<HospitalFormModel?>();
+    // if (value != null) {
+    //    List<Hospital> _hospitalList2 = [];
+    //   _hospitalList2 = context.read<HospitalFormModel>().hospitalList;
+    //   print('hos length: ${_hospitalList2.length}');
+    // }
+    List<DropdownMenuItem<Hospital>> items = [];
+      items = hostpitalListBooking.map((item) {
+        return DropdownMenuItem<Hospital>(
+          child: Text(item.hospitalName!),
+          value: item,
+        );
+      }).toList();
 
-    if (items.isEmpty) {
-      items = [
-        DropdownMenuItem(
-          child: Text(_selectHospitel!.name),
-          value: _selectHospitel,
-        )
-      ];
-    }
+      if (items.isEmpty) {
+        items = [
+          DropdownMenuItem(
+            child: Text(_selectHospitel!.hospitalName!),
+            value: _selectHospitel,
+          )
+        ];
+      }
 
     return Form(
       key: _formkey,
@@ -95,85 +108,87 @@ class _LogInCustomState extends State<Step2Custom> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'ระบุข้อมูลจุดตรวจ',
+              'ระบุข้อมูลการเข้ารับบริการ',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
             Divider(
               height: 9,
-              color: Color(0xFF473F97),
+              color: iBlueColor,
             ),
-            Row(
+            Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                FlatButton(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(4.0),
-                  ),
-                  child: Text(
-                    'วันที่',
-                    style: TextStyle(color: iWhiteColor),
-                  ),
-                  onPressed: () {
+                InkWell(
+                  onTap: () {
                     selectDatePicker(context);
                   },
-                  color: iBlueColor,
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 5),
-                  width: 230,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4.0),
-                    border: Border.all(color: Color(0xFF473F97)),
+                  child: TextFormField(
+                    controller: _txtDate,
+                    enabled: false,
+                    decoration: InputDecoration(
+                      border: UnderlineInputBorder(),
+                      labelText: 'วันที่',
+                      hintText: 'กรุณากดเพื่อเลือกวันที่',
+                      labelStyle: TextStyle(
+                          color: iBlackColor,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: iBlueColor),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: iBlueColor),
+                      ),
+                    ),
+                    // validator: (value) {
+                    //   print('value:${value}');
+                    //   if (value == null || value.isEmpty) {
+                    //     return 'กรุณาเลือกวันที่';
+                    //   }
+                    //   return null;
+                    // },
+                    // onSaved: (value) {
+                    //   _last_name = value;
+                    // },
+                    // initialValue: _dateSelected == null
+                    //     ? 'กดปุ่มเลือกวันที่'
+                    //     : _dateSelected!,
                   ),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          _dateSelected == null ? 'กดปุ่มเลือกวันที่' : _dateSelected!,
-                          textAlign: TextAlign.center,
-                        ),
-                      ]),
                 ),
               ],
             ),
             Container(
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  children: [
-                    FlatButton(
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(4.0),
-                      ),
-                      child: Text(
-                        'สถานที่',
-                        style: TextStyle(color: iWhiteColor),
-                      ),
-                      onPressed: () {},
-                      color: iBlueColor,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: DropdownButton<Hospitel>(
-                          value: _selectHospitel,
-                          style: TextStyle(
-                              color: iBlueColor, fontFamily: fontRegular),
-                          underline: Container(
-                            height: 2,
-                            color: iBlueColor,
-                          ),
-                          onChanged: (newValue) {
-                            setState(() {
-                              _selectHospitel = newValue;
-                              _avaliableQueue = newValue!.avaliableQueue;
-                              context.read<BookingModel>().hospital_name =newValue.name;
-                            });
-                          },
-                          items: items),
-                    ),
-                  ],
-                )),
+              margin: EdgeInsets.only(top: 8.0),
+              child: Text(
+                'จุดรับบริการ',
+                style: TextStyle(
+                    color: iBlackColor,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: DropdownButton<Hospital>(
+                  isExpanded: true,
+                  value: _selectHospitel,
+                  style: TextStyle(color: iBlueColor, fontFamily: fontRegular),
+                  underline: Container(
+                    height: 2,
+                    color: iBlueColor,
+                  ),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectHospitel = newValue;
+                      _avaliableQueue = newValue!.avaliableQueue;
+                      _allQueue = newValue.allQueue;
+                      context.read<BookingModel>().hospital_name =
+                          newValue.hospitalName;
+                      _hosName = newValue.hospitalName;
+                    });
+                  },
+                  items: items),
+            ),
             Container(
               margin: EdgeInsets.only(top: 20.0),
               child: Text(
@@ -183,7 +198,7 @@ class _LogInCustomState extends State<Step2Custom> {
             ),
             Divider(
               height: 9,
-              color: Color(0xFF473F97),
+              color: iBlueColor,
             ),
             Center(
               child: Container(
@@ -191,7 +206,7 @@ class _LogInCustomState extends State<Step2Custom> {
                 padding: EdgeInsets.all(10.0),
                 height: 150,
                 decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xFF473F97)),
+                    border: Border.all(color: iBlueColor),
                     borderRadius: BorderRadius.circular(20.0)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -205,7 +220,7 @@ class _LogInCustomState extends State<Step2Custom> {
                               ? '-'
                               : _avaliableQueue.toString(),
                           style: TextStyle(
-                              color: Color(0xFF473F97),
+                              color: iBlueColor,
                               fontSize: 80.0,
                               fontWeight: FontWeight.bold,
                               fontFamily: fontRegular),
@@ -218,84 +233,114 @@ class _LogInCustomState extends State<Step2Custom> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Container(
-                margin: EdgeInsets.only(top: 230),
-                width: MediaQuery.of(context).size.width,
-                child: FlatButton(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0),
+              child: Consumer<BookingModel>(
+                builder: (context, form, child){
+                return Container(
+                  margin: EdgeInsets.only(top: 150),
+                  width: MediaQuery.of(context).size.width,
+                  child: FlatButton(
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0),
+                    ),
+                    height: 60,
+                    color: iBlueColor,
+                    onPressed: () {
+                      if (_formkey.currentState!.validate()) {
+                        _formkey.currentState!.save();
+              
+                        if (_dateSelected == null || _dateSelected!.isEmpty) {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('แจ้งเตือน'),
+                                  content: Text('กรุณาเลือกวันที่'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('ตกลง')),
+                                  ],
+                                );
+                              });
+                        } else if (_selectHospitel == null) {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('แจ้งเตือน'),
+                                  content: Text('กรุณาเลือกจุดรับบริการ'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('ตกลง')),
+                                  ],
+                                );
+                              });
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('ยืนยัน'),
+                                  content: Text(
+                                      'คุณต้องการยืนยันการจองคิวเข้ารับการตรวจและรับรองว่าข้อมูลดังกล่าวถูกต้องแล้ว'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('ไม่ใช่')),
+                                    TextButton(
+                                        onPressed: () {
+                                          _queue_number++;
+                                          context
+                                              .read<BookingModel>()
+                                              .queue_number = _queue_number;
+              
+                                          //Add Booking to List
+                                          List<BookingItem> listBooking = [];
+                                          if (context
+                                                  .read<BookingListModel>()
+                                                  .bookingList !=
+                                              null) {
+                                            listBooking = context
+                                                .read<BookingListModel>()
+                                                .bookingList;
+                                          }
+                                          listBooking.add(BookingItem(
+                                            hospitalName:_hosName!, //_selectHospitel!.hospitalName!,
+                                            checkDate: _dateSelected!,
+                                            result: 'ไม่ติดเชื้อ',
+                                            fullName: '${form.first_name} ${form.last_name}'
+                                          ));
+                                          context
+                                              .read<BookingListModel>()
+                                              .bookingList = listBooking;
+              
+                                          Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BookingSummaryScreen(
+                                                          all_queue: _allQueue)),
+                                              (route) => false);
+                                        },
+                                        child: Text('ใช่')),
+                                  ],
+                                );
+                              });
+                        }
+                      }
+                    },
+                    child: Text('ถัดไป',
+                        style: TextStyle(fontSize: 20, color: iWhiteColor)),
                   ),
-                  height: 60,
-                  color: iBlueColor,
-                  onPressed: () {
-                    if (_dateSelected == null || _dateSelected!.isEmpty) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('แจ้งเตือน'),
-                              content: Text('กรุณาเลือกวันที่'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('ตกลง')),
-                              ],
-                            );
-                          });
-                    } else if (_selectHospitel == null) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('แจ้งเตือน'),
-                              content: Text('กรุณาเลือกสถานที่เข้ารับการตรวจ'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('ตกลง')),
-                              ],
-                            );
-                          });
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('ยืนยัน'),
-                              content: Text(
-                                  'คุณต้องการยืนยันการจองคิวเข้ารับการตรวจและรับรองว่าข้อมูลดังกล่าวถูกต้องแล้ว'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text('ไม่ใช่')),
-                                TextButton(
-                                    onPressed: () {
-                                      _queue_number++;
-                                      context
-                                          .read<BookingModel>()
-                                          .queue_number = _queue_number;
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  BookingSummaryScreen()),
-                                          (route) => false);
-                                    },
-                                    child: Text('ใช่')),
-                              ],
-                            );
-                          });
-                    }
-                  },
-                  child: Text('ถัดไป',
-                      style: TextStyle(fontSize: 20, color: iWhiteColor)),
-                ),
+                );
+                }
               ),
             ),
           ],
@@ -303,10 +348,4 @@ class _LogInCustomState extends State<Step2Custom> {
       ),
     );
   }
-}
-
-class Hospitel {
-  String name;
-  int avaliableQueue;
-  Hospitel({required this.name, required this.avaliableQueue});
 }

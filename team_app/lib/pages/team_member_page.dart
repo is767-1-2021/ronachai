@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
+import 'package:icovid/pages/login_page.dart';
 
 class TeamMemberScreen extends StatefulWidget {
   const TeamMemberScreen({Key? key}) : super(key: key);
@@ -23,9 +24,13 @@ class _TeamMemberScreenScreenState extends State<TeamMemberScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications_none),
+            icon: Icon(Icons.logout),
             iconSize: 28.0,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => LogInScreen())
+              );
+            },
           ),
         ],
       ),
@@ -55,103 +60,88 @@ class _TeamMemberScreenScreenState extends State<TeamMemberScreen> {
             Container(
               margin: EdgeInsets.only(top: 40.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 100,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      color: Colors.white
-                    ),
-                    child: 
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [Text('6302037343\nนายรณชัย จำศิล')]
-                    )
-                  ),
-                  Container(
-                    height: 100,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      color: Colors.white
-                    ),
-                    child: 
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [Text('6302037335\nนางสาวปณิตา ธาราภูมิ')]
-                    )
-                  ),
-                ]
-              ),
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                        height: 100,
+                        width: 150,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.0),
+                            color: Colors.white),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [Text('6302037343\nนายรณชัย จำศิล')])),
+                    Container(
+                        height: 100,
+                        width: 150,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.0),
+                            color: Colors.white),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('6302037335\nนางสาวปณิตา ธาราภูมิ')
+                            ])),
+                  ]),
             ),
             Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 100,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      color: Colors.white
-                    ),
-                    child: 
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [Text('6302037244\nนางสาวกนกพร มาพันดุง')]
-                    )
-                  ),
-                  Container(
-                    height: 100,
-                    width: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      color: Colors.white
-                    ),
-                    child: 
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [Text('6302037251\nนางสาวชวิสา สันตะวานนท์')]
-                    )
-                  ),
-                ]
-              ),
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                        height: 100,
+                        width: 150,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.0),
+                            color: Colors.white),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('6302037244\nนางสาวกนกพร มาพันดุง')
+                            ])),
+                    Container(
+                        height: 100,
+                        width: 150,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.0),
+                            color: Colors.white),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('6302037251\nนางสาวชวิสา สันตะวานนท์')
+                            ])),
+                  ]),
             ),
             Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 100,
-                    width: 330,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      color: Colors.white
-                    ),
-                    child: 
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [Text('6302037327\nนางสาวอรพรรณ ตาละลักษณ์')]
-                    )
-                  ),
-                ]
-              ),
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                        height: 100,
+                        width: 330,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.0),
+                            color: Colors.white),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text('6302037327\nนางสาวอรพรรณ ตาละลักษณ์')
+                            ])),
+                  ]),
             ),
           ],
         ),
-        ),
+      ),
     );
   }
 }
