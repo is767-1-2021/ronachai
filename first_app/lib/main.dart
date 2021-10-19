@@ -1,5 +1,7 @@
+import 'package:first_app/controllers/todo.dart';
 import 'package:first_app/models/first_form_model.dart';
 import 'package:first_app/pages/seventh_page.dart';
+import 'package:first_app/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,44 +12,60 @@ import 'pages/fourth_page.dart';
 import 'pages/second_page.dart';
 import 'pages/six_page.dart';
 import 'pages/third_page.dart';
+import 'pages/todo_page.dart';
 
 void main() {
+  var services = HttpServices();
+  var controller = TodoController(services);
   runApp(
     MultiProvider(
       providers: [
-      ChangeNotifierProvider(
+        ChangeNotifierProvider(
           create: (context) => FirstFormModel(),
         ),
       ],
-      child: MyApp(),
+      child: TodoApp(
+        controller: controller,
+      ),
     ),
   );
+}
+
+class TodoApp extends StatelessWidget {
+  final TodoController controller;
+  TodoApp({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: TodoPage(
+        controller: controller,
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    title: 'Flutter Demo',
-    theme: ThemeData(
-        primaryColor: Colors.amber,
-        accentColor: Colors.yellow,
-        textTheme: TextTheme(
-          bodyText2: TextStyle(color: Colors.purple)
-        )
-        ),
-    //home: MyHomePage(title: 'Ronachai Pop Cate'),
-    initialRoute: '/5',
-    routes: <String, WidgetBuilder>{
-      '/1': (context)=> FirstPage(),
-      '/2': (context)=> SecondPage(),
-      '/3': (context)=> ThirdPage(),
-      '/4' :(context)=> FourthPage(),
-      '/5' :(context)=> FifthPage(),
-      '/6' :(context)=> SixPage(),
-      '/7' :(context)=> SeventhPage(),
-      '/8' :(context)=> EighthPage(),
-    });
+        title: 'Flutter Demo',
+        theme: ThemeData(
+            primaryColor: Colors.amber,
+            accentColor: Colors.yellow,
+            textTheme: TextTheme(bodyText2: TextStyle(color: Colors.purple))),
+        //home: MyHomePage(title: 'Ronachai Pop Cate'),
+        initialRoute: '/5',
+        routes: <String, WidgetBuilder>{
+          '/1': (context) => FirstPage(),
+          '/2': (context) => SecondPage(),
+          '/3': (context) => ThirdPage(),
+          '/4': (context) => FourthPage(),
+          '/5': (context) => FifthPage(),
+          '/6': (context) => SixPage(),
+          '/7': (context) => SeventhPage(),
+          '/8': (context) => EighthPage(),
+        });
   }
 }
 
