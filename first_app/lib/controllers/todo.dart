@@ -4,7 +4,8 @@ import 'package:first_app/models/todo.dart';
 import 'package:first_app/services/services.dart';
 
 class TodoController {
-  final HttpServices services;
+  //final HttpServices services;
+  final Services services;
   List<Todo> todos = List.empty();
 
   StreamController<bool> onSyncController = StreamController();
