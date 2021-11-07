@@ -4,7 +4,6 @@ import 'package:first_app/models/todo.dart';
 import 'package:first_app/services/services.dart';
 
 class TodoController {
-  //final HttpServices services;
   final Services services;
   List<Todo> todos = List.empty();
 
@@ -18,5 +17,9 @@ class TodoController {
     todos = await services.getTodos();
     onSyncController.add(false);
     return todos;
+  }
+
+  Future<void> updateTodo(int id, bool completed) async {
+    await services.updateTodos(id, completed);
   }
 }

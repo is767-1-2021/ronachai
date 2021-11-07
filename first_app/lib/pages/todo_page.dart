@@ -24,10 +24,13 @@ class _TodoPageState extends State<TodoPage> {
 
   void _getTodos() async {
     var newTodos = await widget.controller.fecthTodos();
-
     setState(() {
       todos = newTodos;
     });
+  }
+
+  void _updateTodos(int _id, bool _completed) async {
+    await widget.controller.updateTodo(_id, _completed);
   }
 
   Widget get body => isLoading
@@ -39,7 +42,12 @@ class _TodoPageState extends State<TodoPage> {
               return Text('Tap button to fetch Todos');
             }
             return CheckboxListTile(
-              onChanged: null,
+              onChanged: (bool? value) {
+                setState(() {
+                  todos[index].completed = value!;
+                  _updateTodos(todos[index].id, value);
+                });
+              },
               value: todos[index].completed,
               title: Text(todos[index].title),
             );
