@@ -1,10 +1,11 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
+import 'package:icovid/controllers/booking.dart';
 import 'package:icovid/models/booking_model.dart';
-import 'package:icovid/pages/bottom_nav_page.dart';
-import 'package:icovid/pages/hospital_home_page.dart';
 import 'package:icovid/pages/login_page.dart';
+import 'package:icovid/services/service.dart';
 import 'package:provider/provider.dart';
 
 import 'constants/font_sonstant.dart';
@@ -14,8 +15,16 @@ import 'models/patient_form_model.dart';
 import 'models/patient_form_model_hospitel.dart';
 import 'models/profile_model.dart';
 import 'models/user_provider.dart';
+import 'pages/ubooking_list_page.dart';
 
-void main() {
+void main() async{
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  var services = FirebaseServices();
+  var controller = BookingController(services);
+
   runApp(
     MultiProvider(
       providers: [
@@ -41,9 +50,22 @@ void main() {
           create: (context) => PatientFormModelHospitel(),
         ),
       ],
-      child: MyApp(),
+      child: BookingApp(controller: controller,),
     ),
   );
+}
+class BookingApp extends StatelessWidget {
+  final BookingController controller;
+  BookingApp({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: BookingListcreen(
+        controller: controller,
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/models/patient_class.dart';
 import 'package:icovid/models/patient_form_model.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
@@ -38,8 +37,8 @@ class qrScan extends StatefulWidget {
 class _qrScanState extends State<qrScan> {
   //String qrString = "Not Scanned";
   double? height, width;
-  String startdate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-  String enddate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  //String startdate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  //String enddate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
 
   // Future<void> _openDatepickerstart(BuildContext context) async {

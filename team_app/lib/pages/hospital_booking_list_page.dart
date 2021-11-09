@@ -55,12 +55,12 @@ class HospitalBookingList extends StatelessWidget {
               title: Text('${_bookingList[index].fullName}'),
               subtitle: Text('${_bookingList[index].checkDate}'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BookingDetail(items: _bookingList[index]),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => BookingDetail(items: _bookingList[index]),
+                //   ),
+                // );
               },
             ),
           );

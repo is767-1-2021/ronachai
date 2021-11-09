@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/models/patient_class_hospitel.dart';
 import 'package:icovid/models/patient_form_model_hospitel.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'login_page.dart';
@@ -296,7 +295,7 @@ class PatientDetail extends StatelessWidget {
                   borderSide: BorderSide(color: iBlueColor),
                 ),
               ),
-              initialValue: DateFormat('dd/MM/yyyy').format(DateTime.now()).toString()
+              //initialValue: DateFormat('dd/MM/yyyy').format(DateTime.now()).toString()
             ),ElevatedButton(
                             
                             onPressed: () {
