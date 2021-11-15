@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/data/data.dart';
 import 'package:icovid/pages/booking_step1_page.dart';
 import 'package:icovid/pages/login_page.dart';
@@ -30,10 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
             iconSize: 28.0,
             onPressed: () {
               Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => LogInScreen()),
-                (route) => false
-              );
+                  context,
+                  MaterialPageRoute(builder: (context) => LogInScreen()),
+                  (route) => false);
             },
           ),
         ],
@@ -43,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
         slivers: [
           _headerSection(screenHeight),
           _preventionTipsSection(screenHeight),
-          _BookingSection(screenHeight)
+          //_BookingSection(screenHeight),
+          _Menu(screenHeight)
         ],
       ),
     );
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: screenHeight * 0.03),
+            SizedBox(height: screenHeight * 0.01),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -88,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            SizedBox(height: screenHeight * 0.03),
+            SizedBox(height: screenHeight * 0.01),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -150,9 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Image.asset(
                             e.keys.first,
-                            height: screenHeight * 0.12,
+                            height: screenHeight * 0.07,
                           ),
-                          SizedBox(height: screenHeight * 0.015),
+                          SizedBox(height: screenHeight * 0.005),
                           Text(
                             e.values.first,
                             style: TextStyle(
@@ -210,5 +211,49 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  SliverToBoxAdapter _Menu(double screenHeight) {
+    final List<Icon> _iconList = <Icon>
+    [
+      Icon(Icons.app_registration,color: Colors.white,size: 30,),Icon(Icons.login,color: Colors.white,size: 30,),
+      Icon(Icons.event_note,color: Colors.white,size: 30,),Icon(Icons.local_hospital,color: Colors.white,size: 30,),
+      Icon(Icons.local_hospital_rounded,color: Colors.white,size: 30,),Icon(Icons.admin_panel_settings,color: Colors.white,size: 30,),
+    ];
+    return SliverToBoxAdapter(
+      child: Container(
+        height: screenHeight *0.35,
+        child: GridView.count(
+          crossAxisCount: 3,
+          children: List.generate(6, (index) {
+            return InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, '/${index + 1}');
+              },
+              child: Container(
+                margin: EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: iBlueColor,
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _iconList[index],
+                      Text(
+                        index+1 == 1 ? 'ลงทะเบียน': index+1 == 2 ? 'เข้าสู่ระบบ':index+1 == 3 ?'จองคิว':index+1 == 4 ?'รพ.':index+1 == 5 ?'รพ.สนาม':'ผู้ดูแลระบบ',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+        ),
+    ),
+      ));
   }
 }

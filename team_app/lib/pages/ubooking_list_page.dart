@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
-import 'package:icovid/controllers/booking.dart';
-import 'package:icovid/models/booking_class.dart';
+import 'package:icovid/controllers/booking_controller.dart';
 import 'package:icovid/models/booking_list_model.dart';
+import 'package:icovid/models/booking_model.dart';
 import 'package:icovid/pages/login_page.dart';
+import 'package:icovid/services/booking_service.dart';
 import 'package:provider/provider.dart';
 
-class BookingListcreen extends StatefulWidget {
-  final BookingController controller;
+import 'bottom_nav_page.dart';
 
-  BookingListcreen({required this.controller});
+class BookingListcreen extends StatefulWidget {
+  // final BookingController controller;
+  // BookingListcreen({required this.controller});
+  var service = FirebaseServices();
+  var controller;
+  BookingListcreen() {
+    controller = BookingController(service);
+  }
 
   @override
   _BookingListcreenState createState() => _BookingListcreenState();
@@ -73,38 +80,47 @@ class _BookingListcreenState extends State<BookingListcreen> {
       _bookingList = context.read<BookingListModel>().bookingList;
     }
     return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text(
-            'รายการจองคิวของฉัน',
-            style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.w700, color: iWhiteColor),
+        appBar: AppBar(
+          title: Center(
+            child: Text(
+              'รายการจองคิวของฉัน',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: iWhiteColor),
+            ),
           ),
-        ),
-        backgroundColor: iBlueColor,
-        elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_outlined),
-          iconSize: 30.0,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            iconSize: 28.0,
+          backgroundColor: iBlueColor,
+          elevation: 0.0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_outlined),
+            iconSize: 30.0,
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LogInScreen()));
+              Navigator.pop(context);
             },
           ),
-        ],
-      ),
-      body: Center(
-        child: body,
-      )
-    );
+          actions: [
+            IconButton(
+              icon: Icon(Icons.logout),
+              iconSize: 28.0,
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LogInScreen()));
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.home),
+              iconSize: 28.0,
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => BottomNavScreen()));
+              },
+            ),
+          ],
+        ),
+        body: Center(
+          child: body,
+        ));
   }
 }
 
@@ -120,6 +136,8 @@ class BookingItem {
       required this.checkDate,
       required this.result,
       required this.fullName});
+
+  add(Map<String, String> map) {}
 }
 
 class BookingDetail extends StatelessWidget {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/models/booking_model.dart';
-import 'package:icovid/models/profile_model.dart';
 import 'package:icovid/models/user_provider.dart';
 import 'package:icovid/pages/booking_step2_page.dart';
 import 'package:provider/provider.dart';

@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/constants/font_sonstant.dart';
+import 'package:icovid/controllers/booking_controller.dart';
 import 'package:icovid/data/data.dart';
 import 'package:icovid/models/booking_list_model.dart';
 import 'package:icovid/models/booking_model.dart';
 import 'package:icovid/models/hospital_clas.dart';
 import 'package:icovid/pages/booking_summary.dart';
+import 'package:icovid/services/booking_service.dart';
 import 'package:provider/provider.dart';
 
 import 'ubooking_list_page.dart';
@@ -75,7 +77,7 @@ class _LogInCustomState extends State<Step2Custom> {
   Widget build(BuildContext context) {
     _queue_number = context.read<BookingModel>().queue_number;
     //Get data from provider
-   
+
     // final value = context.watch<HospitalFormModel?>();
     // if (value != null) {
     //    List<Hospital> _hospitalList2 = [];
@@ -83,21 +85,21 @@ class _LogInCustomState extends State<Step2Custom> {
     //   print('hos length: ${_hospitalList2.length}');
     // }
     List<DropdownMenuItem<Hospital>> items = [];
-      items = hostpitalListBooking.map((item) {
-        return DropdownMenuItem<Hospital>(
-          child: Text(item.hospitalName!),
-          value: item,
-        );
-      }).toList();
+    items = hostpitalListBooking.map((item) {
+      return DropdownMenuItem<Hospital>(
+        child: Text(item.hospitalName!),
+        value: item,
+      );
+    }).toList();
 
-      if (items.isEmpty) {
-        items = [
-          DropdownMenuItem(
-            child: Text(_selectHospitel!.hospitalName!),
-            value: _selectHospitel,
-          )
-        ];
-      }
+    if (items.isEmpty) {
+      items = [
+        DropdownMenuItem(
+          child: Text(_selectHospitel!.hospitalName!),
+          value: _selectHospitel,
+        )
+      ];
+    }
 
     return Form(
       key: _formkey,
@@ -233,8 +235,7 @@ class _LogInCustomState extends State<Step2Custom> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Consumer<BookingModel>(
-                builder: (context, form, child){
+              child: Consumer<BookingModel>(builder: (context, form, child) {
                 return Container(
                   margin: EdgeInsets.only(top: 150),
                   width: MediaQuery.of(context).size.width,
@@ -244,10 +245,10 @@ class _LogInCustomState extends State<Step2Custom> {
                     ),
                     height: 60,
                     color: iBlueColor,
-                    onPressed: () {
+                    onPressed: (){
                       if (_formkey.currentState!.validate()) {
                         _formkey.currentState!.save();
-              
+
                         if (_dateSelected == null || _dateSelected!.isEmpty) {
                           showDialog(
                               context: context,
@@ -295,12 +296,12 @@ class _LogInCustomState extends State<Step2Custom> {
                                         },
                                         child: Text('ไม่ใช่')),
                                     TextButton(
-                                        onPressed: () {
+                                        onPressed: (){
                                           _queue_number++;
                                           context
                                               .read<BookingModel>()
                                               .queue_number = _queue_number;
-              
+
                                           //Add Booking to List
                                           List<BookingItem> listBooking = [];
                                           if (context
@@ -311,22 +312,34 @@ class _LogInCustomState extends State<Step2Custom> {
                                                 .read<BookingListModel>()
                                                 .bookingList;
                                           }
+                                          //add to State
                                           listBooking.add(BookingItem(
                                             hospitalName:_hosName!, //_selectHospitel!.hospitalName!,
                                             checkDate: _dateSelected!,
                                             result: 'ไม่ติดเชื้อ',
                                             fullName: '${form.first_name} ${form.last_name}'
                                           ));
+
+                                          //add to firebase
+                                          var service = FirebaseServices();
+                                          BookingController controller = BookingController(service);
+                                          controller.addBooking(new BookingItem(
+                                              hospitalName: _hosName!,
+                                              checkDate: _dateSelected!,
+                                              result: '',
+                                              fullName:"${form.first_name} ${form.last_name}"));
+
                                           context
                                               .read<BookingListModel>()
                                               .bookingList = listBooking;
-              
+
                                           Navigator.pushAndRemoveUntil(
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       BookingSummaryScreen(
-                                                          all_queue: _allQueue)),
+                                                          all_queue:
+                                                              _allQueue)),
                                               (route) => false);
                                         },
                                         child: Text('ใช่')),
@@ -340,8 +353,7 @@ class _LogInCustomState extends State<Step2Custom> {
                         style: TextStyle(fontSize: 20, color: iWhiteColor)),
                   ),
                 );
-                }
-              ),
+              }),
             ),
           ],
         ),

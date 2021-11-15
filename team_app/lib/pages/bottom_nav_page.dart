@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:icovid/controllers/booking.dart';
-import 'package:icovid/pages/ubooking_list_page.dart';
-import 'package:icovid/services/service.dart';
 
 import 'dash_board_page.dart';
 import 'home_page.dart';
 import 'team_member_page.dart';
+import 'ubooking_list_page.dart';
 
 class BottomNavScreen extends StatefulWidget {
-  const BottomNavScreen(
-      {Key? key}): super(key: key);
 
   @override
   _BottomNavScreenState createState() => _BottomNavScreenState();
 }
 
 class _BottomNavScreenState extends State<BottomNavScreen> {
-  
   final List _screens = [
     HomeScreen(),
     DashboardScreen(),
-    Scaffold(),//BookingListcreen(),
+    BookingListcreen(),
     TeamMemberScreen(),
   ];
   int _currentIndex = 0;
