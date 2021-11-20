@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icovid/constants/color_constant.dart';
-import 'package:icovid/models/booking_model.dart';
+import 'package:icovid/models/booking_class_model.dart';
 import 'package:icovid/models/user_provider.dart';
 import 'package:icovid/pages/booking_step2_page.dart';
 import 'package:provider/provider.dart';
@@ -49,8 +49,7 @@ class _LogInCustomState extends State<Step1Custom> {
 
     return Form(
       key: _formkey,
-      child: Consumer<UserProvider>(
-        builder: (context, form, child) {
+      child: Consumer<UserProvider>(builder: (context, form, child) {
         return Padding(
           padding: EdgeInsets.all(20.0),
           child: Column(
@@ -214,8 +213,7 @@ class _LogInCustomState extends State<Step1Custom> {
             ],
           ),
         );
-      }
-      ),
+      }),
     );
   }
 

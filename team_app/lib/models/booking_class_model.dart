@@ -1,15 +1,20 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 //Firebase
 class Booking {
-  final String hospitalName;
-  final String checkDate;
-  final String result;
-  final String fullName;
+  String hospitalName;
+  String checkDate;
+  String result;
+  String fullName;
+  int hospitalNumber;
+  String idCardNumber;
+  int bookingNumber;
+ 
+ 
 
-  Booking(this.hospitalName, this.checkDate, this.result, this.fullName);
+  Booking(this.hospitalName, this.checkDate, this.result, this.fullName,
+      this.hospitalNumber, this.idCardNumber, this.bookingNumber);
 
   factory Booking.fromDs(
     Map<String, Object?> json,
@@ -19,6 +24,23 @@ class Booking {
       json['checkDate'] as String,
       json['result'] as String,
       json['fullName'] as String,
+      json['hospitalNumber'] as int,
+      json['idCardNumber'] as String,
+      json['bookingNumber'] as int,
+      
+    );
+  }
+  factory Booking.fromJson(
+    Map<String, dynamic> json,
+  ) {
+    return Booking(
+      json['hospitalName'] as String,
+      json['checkDate'] as String,
+      json['result'] as String,
+      json['fullName'] as String,
+      json['hospitalNumber'] as int,
+      json['idCardNumber'] as String,
+      json['bookingNumber'] as int,
     );
   }
 }

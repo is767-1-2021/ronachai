@@ -4,8 +4,8 @@ import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/constants/font_sonstant.dart';
 import 'package:icovid/controllers/booking_controller.dart';
 import 'package:icovid/data/data.dart';
-import 'package:icovid/models/booking_list_model.dart';
-import 'package:icovid/models/booking_model.dart';
+import 'package:icovid/models/booking_provider_model.dart';
+import 'package:icovid/models/booking_class_model.dart';
 import 'package:icovid/models/hospital_clas.dart';
 import 'package:icovid/pages/booking_summary.dart';
 import 'package:icovid/services/booking_service.dart';
@@ -43,11 +43,20 @@ class _LogInCustomState extends State<Step2Custom> {
   final _formkey = GlobalKey<FormState>();
   int? _avaliableQueue;
   int? _allQueue;
+  int _hospitalNumber = 0;
   int _queue_number = 0;
   var _txtDate = TextEditingController();
   String? _dateSelected;
-  Hospital? _selectHospitel;
+  BHospital? _selectHospitel;
   String? _hosName;
+  List<BHospital> hospitalList = List.empty();
+  // var service = FirebaseServices();
+  // BookingController controller = BookingController(service);
+  var service = FirebaseServices();
+  var controller;
+  _LogInCustomState() {
+    controller = BookingController(service);
+  }
 
   DateTime date = DateTime.now();
   TimeOfDay time = TimeOfDay.now();
@@ -55,7 +64,7 @@ class _LogInCustomState extends State<Step2Custom> {
     final DateTime? datePicked = await showDatePicker(
         context: context,
         initialDate: date,
-        firstDate: DateTime(1940),
+        firstDate: DateTime.now(),
         lastDate: DateTime(2030),
         helpText: 'กรุณาเลือกวันที่เข้ารับการตรวจ',
         cancelText: 'ยกเลิก',
@@ -74,8 +83,18 @@ class _LogInCustomState extends State<Step2Custom> {
   }
 
   @override
+  void initState() {
+    _getHospitalList();
+  }
+
+  void _getHospitalList() async {
+    hospitalList = await controller.fecthHospitalList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _queue_number = context.read<BookingModel>().queue_number;
+    //_queue_number = context.read<BookingModel>().queue_number;
+
     //Get data from provider
 
     // final value = context.watch<HospitalFormModel?>();
@@ -84,22 +103,22 @@ class _LogInCustomState extends State<Step2Custom> {
     //   _hospitalList2 = context.read<HospitalFormModel>().hospitalList;
     //   print('hos length: ${_hospitalList2.length}');
     // }
-    List<DropdownMenuItem<Hospital>> items = [];
-    items = hostpitalListBooking.map((item) {
-      return DropdownMenuItem<Hospital>(
-        child: Text(item.hospitalName!),
-        value: item,
-      );
-    }).toList();
+    List<DropdownMenuItem<BHospital>> items = [];
+    // items = hostpitalListBooking.map((item) {
+    //   return DropdownMenuItem<Hospital>(
+    //     child: Text(item.hospitalName!),
+    //     value: item,
+    //   );
+    // }).toList();
 
-    if (items.isEmpty) {
-      items = [
-        DropdownMenuItem(
-          child: Text(_selectHospitel!.hospitalName!),
-          value: _selectHospitel,
-        )
-      ];
-    }
+    // if (items.isEmpty) {
+    //   items = [
+    //     DropdownMenuItem(
+    //       child: Text(_selectHospitel!.hospitalName!),
+    //       value: _selectHospitel,
+    //     )
+    //   ];
+    // }
 
     return Form(
       key: _formkey,
@@ -171,25 +190,33 @@ class _LogInCustomState extends State<Step2Custom> {
             ),
             Padding(
               padding: EdgeInsets.all(8.0),
-              child: DropdownButton<Hospital>(
-                  isExpanded: true,
-                  value: _selectHospitel,
-                  style: TextStyle(color: iBlueColor, fontFamily: fontRegular),
-                  underline: Container(
-                    height: 2,
-                    color: iBlueColor,
-                  ),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectHospitel = newValue;
-                      _avaliableQueue = newValue!.avaliableQueue;
-                      _allQueue = newValue.allQueue;
-                      context.read<BookingModel>().hospital_name =
-                          newValue.hospitalName;
-                      _hosName = newValue.hospitalName;
-                    });
-                  },
-                  items: items),
+              child: DropdownButton<BHospital>(
+                isExpanded: true,
+                //value: _selectHospitel,
+                style: TextStyle(color: iBlueColor, fontFamily: fontRegular),
+                underline: Container(
+                  height: 2,
+                  color: iBlueColor,
+                ),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectHospitel = newValue;
+                    _avaliableQueue = newValue!.avaliable_queue;
+                    _allQueue = newValue.no_patient;
+                    _hospitalNumber = newValue.hospital_number;
+                    context.read<BookingModel>().hospital_name =
+                        newValue.hospital_name;
+                    _hosName = newValue.hospital_name;
+                  });
+                },
+                items: hospitalList
+                    .map<DropdownMenuItem<BHospital>>((BHospital value) {
+                  return DropdownMenuItem<BHospital>(
+                    value: value,
+                    child: Text(value.hospital_name),
+                  );
+                }).toList(),
+              ),
             ),
             Container(
               margin: EdgeInsets.only(top: 20.0),
@@ -245,7 +272,7 @@ class _LogInCustomState extends State<Step2Custom> {
                     ),
                     height: 60,
                     color: iBlueColor,
-                    onPressed: (){
+                    onPressed: () {
                       if (_formkey.currentState!.validate()) {
                         _formkey.currentState!.save();
 
@@ -296,51 +323,84 @@ class _LogInCustomState extends State<Step2Custom> {
                                         },
                                         child: Text('ไม่ใช่')),
                                     TextButton(
-                                        onPressed: (){
-                                          _queue_number++;
-                                          context
-                                              .read<BookingModel>()
-                                              .queue_number = _queue_number;
+                                        onPressed: () {
+                                          print(
+                                              '_avaliableQueue:${_avaliableQueue}');
+                                          print('_allQueue:${_allQueue}');
+                                          if (_avaliableQueue == 0) {
+                                            showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text('แจ้งเตือน'),
+                                                    content: Text(
+                                                        'ไม่สามารถจองได้เนื่องจากคิวเต็มแล้ว'),
+                                                    actions: [
+                                                      TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text('ตกลง')),
+                                                    ],
+                                                  );
+                                                });
+                                          } else {
+                                            print('_avaliableQueue:${_avaliableQueue}');
+                                            print('_allQueue:${_allQueue}');
+                                            _queue_number =_avaliableQueue == _allQueue? 1: (_allQueue! -_avaliableQueue!) +1;
+                                            print('_queue_number:${_queue_number}');
+                                            context.read<BookingModel>().queue_number = _queue_number;
 
-                                          //Add Booking to List
-                                          List<BookingItem> listBooking = [];
-                                          if (context
-                                                  .read<BookingListModel>()
-                                                  .bookingList !=
-                                              null) {
-                                            listBooking = context
-                                                .read<BookingListModel>()
-                                                .bookingList;
+                                            //Add Booking to List
+                                            List<Booking> listBooking = [];
+                                            if (context
+                                                    .read<BookingProvider>()
+                                                    .bookingList !=
+                                                null) {
+                                              listBooking = context
+                                                  .read<BookingProvider>()
+                                                  .bookingList;
+                                            }
+                                            //add to State
+                                            listBooking.add(Booking(
+                                                _hosName!,
+                                                _dateSelected!,
+                                                '',
+                                                '${form.first_name} ${form.last_name}',
+                                                _hospitalNumber,
+                                                "${form.id_card}",
+                                                _queue_number));
+
+                                            //add to firebase
+                                            controller.addBooking(new Booking(
+                                                _hosName!,
+                                                _dateSelected!,
+                                                '',
+                                                '${form.first_name} ${form.last_name}',
+                                                _hospitalNumber,
+                                                "${form.id_card}",
+                                                _queue_number));
+
+                                            //update avaliable queue
+                                            controller.updateAvaliableQueue(
+                                                _hospitalNumber,
+                                                _avaliableQueue! - 1);
+
+                                            context
+                                                .read<BookingProvider>()
+                                                .bookingList = listBooking;
+
+                                            Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        BookingSummaryScreen(
+                                                            all_queue:
+                                                                _allQueue)),
+                                                (route) => false);
                                           }
-                                          //add to State
-                                          listBooking.add(BookingItem(
-                                            hospitalName:_hosName!, //_selectHospitel!.hospitalName!,
-                                            checkDate: _dateSelected!,
-                                            result: 'ไม่ติดเชื้อ',
-                                            fullName: '${form.first_name} ${form.last_name}'
-                                          ));
-
-                                          //add to firebase
-                                          var service = FirebaseServices();
-                                          BookingController controller = BookingController(service);
-                                          controller.addBooking(new BookingItem(
-                                              hospitalName: _hosName!,
-                                              checkDate: _dateSelected!,
-                                              result: '',
-                                              fullName:"${form.first_name} ${form.last_name}"));
-
-                                          context
-                                              .read<BookingListModel>()
-                                              .bookingList = listBooking;
-
-                                          Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      BookingSummaryScreen(
-                                                          all_queue:
-                                                              _allQueue)),
-                                              (route) => false);
                                         },
                                         child: Text('ใช่')),
                                   ],

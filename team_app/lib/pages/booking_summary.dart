@@ -1,7 +1,7 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
-import 'package:icovid/models/booking_model.dart';
+import 'package:icovid/models/booking_class_model.dart';
 import 'package:provider/provider.dart';
 
 import 'bottom_nav_page.dart';
@@ -59,7 +59,7 @@ class _BookingSummaryState extends State<BookingSummaryScreen> {
                   Container(
                     //width: 20,
                     child: Text(
-                      '${context.read<BookingModel>().queue_number.toString()}/${all_queue}',
+                      '${context.read<BookingModel>().queue_number.toString()}',
                       style: TextStyle(fontSize: 40, color: Colors.red),
                     ),
                   ),

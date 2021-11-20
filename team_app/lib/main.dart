@@ -3,13 +3,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/controllers/booking_controller.dart';
-import 'package:icovid/models/booking_model.dart';
+import 'package:icovid/models/booking_class_model.dart';
 import 'package:icovid/pages/login_page.dart';
 import 'package:icovid/services/booking_service.dart';
 import 'package:provider/provider.dart';
 
 import 'constants/font_sonstant.dart';
-import 'models/booking_list_model.dart';
+import 'models/booking_provider_model.dart';
 import 'models/hospital_model.dart';
 import 'models/patient_form_model.dart';
 import 'models/patient_form_model_hospitel.dart';
@@ -40,7 +40,7 @@ void main() async {
           create: (context) => ProfileModel(),
         ),
         ChangeNotifierProvider(
-          create: (context) => BookingListModel(),
+          create: (context) => BookingProvider()
         ),
         ChangeNotifierProvider(
           //ของกิ๊ฟ
