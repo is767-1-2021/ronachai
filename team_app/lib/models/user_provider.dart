@@ -1,7 +1,8 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:icovid/models/user_class.dart';
+
+import 'user_class_model.dart';
 
 class UserProvider with ChangeNotifier {
   int? id_card;
@@ -16,6 +17,13 @@ class UserProvider with ChangeNotifier {
   int? hospitalId;
   String? hospitalName;
   List<User>? _userList;
+  UserProvider? user;
+
+  UserProvider? get getUser => this.user;
+  set setUser(UserProvider? user) {
+    this.user = user;
+    notifyListeners();
+  } 
 
   get idcard => this.id_card;
 
@@ -119,49 +127,18 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<User> users = [
-    // User(
-    //     username: "ronnachia@gmail.com",
-    //     name: "Ronnachia Jumsil",
-    //     position: "Admin",
-    //     password: "123456"),
-    // User(
-    //     username: "panita.t@gmail.com",
-    //     name: "Panita Tharaphoom",
-    //     position: "Admin",
-    //     password: "123456"),
-    // User(
-    //     username: "orapan.t@gmail.com",
-    //     name: "Orapan Talalaksana",
-    //     position: "Lab",
-    //     password: "123456"),
-    // User(
-    //     username: "ganokporn.m@gmail.com",
-    //     name: "Ganokporn Maphundoong",
-    //     position: "Doctor",
-    //     password: "123456"),
-    // User(
-    //     username: "chavisa.s@gmail.com",
-    //     name: "Chavisa Santavanond",
-    //     position: "Doctor",
-    //     password: "123456"),
-    // User(
-    //     username: "wipawan.v@gmail.com",
-    //     name: "Wipawan Vattanakiettipong",
-    //     position: "Admin",
-    //     password: "123456"),
-  ];
+  // List<User> users = [];
 
-  List<User> getUser() {
-    return users;
-  }
+  // List<User> getUser() {
+  //   return users;
+  // }
 
-  void addUser(User statement) {
-    users.add(statement);
+  //void addUser(User statement) {
+    //users.add(statement);
 
     //users.insert(0, statement); เพิ่มด้านบน
     //users.add(statement); เพิ่มด้านล่าง
-    notifyListeners();
+    //notifyListeners();
 // แจ้ง consumer
-  }
+  //}
 }

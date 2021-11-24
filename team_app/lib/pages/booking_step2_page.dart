@@ -3,15 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/constants/font_sonstant.dart';
 import 'package:icovid/controllers/booking_controller.dart';
-import 'package:icovid/data/data.dart';
 import 'package:icovid/models/booking_provider_model.dart';
 import 'package:icovid/models/booking_class_model.dart';
 import 'package:icovid/models/hospital_clas.dart';
 import 'package:icovid/pages/booking_summary.dart';
 import 'package:icovid/services/booking_service.dart';
 import 'package:provider/provider.dart';
-
-import 'ubooking_list_page.dart';
 
 class BookingStep2Screen extends StatelessWidget {
   const BookingStep2Screen({Key? key}) : super(key: key);
@@ -52,7 +49,7 @@ class _LogInCustomState extends State<Step2Custom> {
   List<BHospital> hospitalList = List.empty();
   // var service = FirebaseServices();
   // BookingController controller = BookingController(service);
-  var service = FirebaseServices();
+  var service = BookingServices();
   var controller;
   _LogInCustomState() {
     controller = BookingController(service);
@@ -192,7 +189,7 @@ class _LogInCustomState extends State<Step2Custom> {
               padding: EdgeInsets.all(8.0),
               child: DropdownButton<BHospital>(
                 isExpanded: true,
-                //value: _selectHospitel,
+                value: _selectHospitel,
                 style: TextStyle(color: iBlueColor, fontFamily: fontRegular),
                 underline: Container(
                   height: 2,

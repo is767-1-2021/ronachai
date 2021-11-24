@@ -1,4 +1,12 @@
 {
     "editor.fontSize": 15,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": false,
+        "source.fixAll.eslint": false
+    },
     "editor.formatOnSave": false,
+    "[dart]": {
+        "editor.formatOnSave": false,
+        "editor.formatOnType": false,
+    }
 }

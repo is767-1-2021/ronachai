@@ -8,18 +8,19 @@ class DashboardController {
   List<CovidStat> stats = List.empty();
   bool _isDisposed = false;
   
-  StreamController<bool> onSyncHttpService = StreamController();
+  StreamController<bool> onSyncHttpService = StreamController<bool>.broadcast();
   Stream<bool> get onSyncService => onSyncHttpService.stream;
 
   DashboardController(this.services);
 
   Future<List<CovidStat>> getCovidStatistics() async {
     if(_isDisposed) {
-      onSyncHttpService = StreamController();
+      onSyncHttpService = StreamController<bool>.broadcast();
     }
-    onSyncHttpService.add(true);
+    onSyncHttpService.sink.add(true);
     stats = await services.getCovidStatistics();
-    onSyncHttpService.add(false);
+    onSyncHttpService.sink.add(false);
+    dispose();
     return stats;
   }
 

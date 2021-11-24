@@ -13,6 +13,7 @@ class BookingProvider extends ChangeNotifier {
   String? idCardNumber;
   int? hospitalNumber;
   List<Booking>? _bookingList;
+  List<Booking>? _bookingHospitalList;
 
   get getHospitalName => this.hospitalName;
 
@@ -67,6 +68,13 @@ class BookingProvider extends ChangeNotifier {
 
   set bookingList(value) {
     this._bookingList = value;
+    notifyListeners();
+  }
+
+  get bookingHospitalList => this._bookingHospitalList;
+
+  set bookingHospitalList(value) {
+    this._bookingHospitalList = value;
     notifyListeners();
   }
 

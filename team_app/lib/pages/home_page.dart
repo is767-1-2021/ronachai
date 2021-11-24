@@ -1,21 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
+import 'package:icovid/controllers/auth_controller.dart';
 import 'package:icovid/data/data.dart';
+import 'package:icovid/models/resule_model.dart';
 import 'package:icovid/pages/booking_step1_page.dart';
-import 'package:icovid/pages/login_page.dart';
+import 'package:icovid/services/auth_service.dart';
+
+import 'bottom_nav_page.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final auth = FirebaseAuth.instance;
+  var service = AuthService();
+  var controller;
+  _HomeScreenState() {
+    controller = AuthController(service);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    var user = auth.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF473F97),
@@ -27,13 +39,103 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: user == null ? Icon(Icons.login): Icon(Icons.logout),
             iconSize: 28.0,
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LogInScreen()),
-                  (route) => false);
+            onPressed: () async{
+              if(user == null){
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('แจ้งเตือน'),
+                      content: Text('คุณยังไม่ได้ลงชื่อเข้าใช้งานระบบ'),
+                      actions: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('ตกลง'),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                );
+              }else{
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('แจ้งเตือน'),
+                    content: Text('คุณต้องการออกจากระบบหรือไม่?'),
+                    actions: [
+                       ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('ยกเลิก'),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.redAccent
+                          ),
+                      ),
+                      ElevatedButton(
+                          onPressed: () async{
+                            Result result = await controller.SignOut();
+                            if(result.result){
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('แจ้งเตือน'),
+                                    content: Text('ออกจากระบบเรียบร้อย'),
+                                    actions: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => BottomNavScreen()),
+                                          (route) => false);
+                                        },
+                                        child: Text('ตกลง'),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.green
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }else{
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('แจ้งเตือน'),
+                                    content: Text('ขออภัยไม่สามารถออกจากระบบได้กรุณาลองใหม่อีกครั้ง ${result.msg}'),
+                                    actions: [
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text('ตกลง'))
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          child: Text('ตกลง'),
+                           style: ElevatedButton.styleFrom(
+                            primary: Colors.green
+                          ),
+                      )
+                    ],
+                  );
+                },
+              );
+            }
             },
           ),
         ],
@@ -228,7 +330,29 @@ class _HomeScreenState extends State<HomeScreen> {
           children: List.generate(6, (index) {
             return InkWell(
               onTap: () {
-                Navigator.pushNamed(context, '/${index + 1}');
+                var user = auth.currentUser;
+                if(index + 1 == 1 || index + 1 == 2){
+                  Navigator.pushNamed(context, '/${index + 1}');  
+                }else if(user == null){
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('แจ้งเตือน'),
+                        content: Text('กรุณาลงชื่อเข้าใช้งานระบบ!'),
+                        actions: [
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('ตกลง'))
+                        ],
+                      );
+                    },
+                  );
+                }else{
+                    Navigator.pushNamed(context, '/${index + 1}');  
+                }
               },
               child: Container(
                 margin: EdgeInsets.all(8.0),

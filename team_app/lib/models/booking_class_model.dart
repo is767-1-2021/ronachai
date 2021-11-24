@@ -11,8 +11,6 @@ class Booking {
   String idCardNumber;
   int bookingNumber;
  
- 
-
   Booking(this.hospitalName, this.checkDate, this.result, this.fullName,
       this.hospitalNumber, this.idCardNumber, this.bookingNumber);
 
@@ -56,7 +54,17 @@ class AllBookings {
     return AllBookings(bookings);
   }
 }
+class SingleBooking {
+  final Booking booking;
+  SingleBooking(this.booking);
 
+  factory SingleBooking.fromJson(QuerySnapshot s) {
+    var booking = s.docs.map((DocumentSnapshot ds) {
+      return Booking.fromJson(ds.data() as Map<String, dynamic>);
+    });
+    return SingleBooking(booking.first);
+  }
+}
 
 //State
 class BookingModel extends ChangeNotifier {

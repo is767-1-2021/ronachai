@@ -11,11 +11,13 @@ class BookingController {
 
   StreamController<bool> onSyncController = StreamController<bool>.broadcast();
   Stream<bool> get onSync => onSyncController.stream;
+  StreamController<bool> onSyncHosBookingController = StreamController<bool>.broadcast();
+  Stream<bool> get onSyncHosBooking => onSyncHosBookingController.stream;
   bool _isDisposed = false;
 
   BookingController(this.services);
 
-  Future<List<Booking>?> fecthBookings(String idCardNumber) async {
+  Future<List<Booking>> fecthMyBookings(String idCardNumber) async {
     if (_isDisposed) {
       onSyncController = StreamController<bool>.broadcast();
     }
@@ -26,8 +28,18 @@ class BookingController {
     return bookings;
   }
 
+    Future<List<Booking>> fecthBookingByHospitalNumber(int hospitalNumber) async {
+    if (_isDisposed) {
+      onSyncHosBookingController = StreamController<bool>.broadcast();
+    }
+    onSyncHosBookingController.sink.add(true);
+    bookings = await services.getBookingsByHospitalNumber(hospitalNumber);
+    onSyncHosBookingController.sink.add(false);
+    dispose();
+    return bookings;
+  }
+
   void addBooking(Booking items) async {
-    print('controller_booking:${items.bookingNumber}');
     services.addBooking(items);
   }
 
@@ -48,6 +60,7 @@ class BookingController {
 
   void dispose() {
     onSyncController.close();
+    onSyncHosBookingController.close();
     _isDisposed = true;
   }
 }

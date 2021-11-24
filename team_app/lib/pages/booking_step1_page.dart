@@ -1,53 +1,55 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icovid/constants/color_constant.dart';
+import 'package:icovid/controllers/auth_controller.dart';
 import 'package:icovid/models/booking_class_model.dart';
+import 'package:icovid/models/user_profile_provider.dart';
 import 'package:icovid/models/user_provider.dart';
 import 'package:icovid/pages/booking_step2_page.dart';
+import 'package:icovid/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
-class BookingStep1Screen extends StatelessWidget {
-  const BookingStep1Screen({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'STEP 1 : ข้อมูลทั่วไป',
-          style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.w700, color: iWhiteColor),
-        ),
-        backgroundColor: iBlueColor,
-      ),
-      body: SingleChildScrollView(child: Step1Custom()),
-    );
+class BookingStep1Screen extends StatefulWidget {
+  var service = AuthService();
+  var controller;
+  BookingStep1Screen() {
+    controller = AuthController(service);
   }
-}
-
-class Step1Custom extends StatefulWidget {
-  const Step1Custom({Key? key}) : super(key: key);
 
   @override
   _LogInCustomState createState() => _LogInCustomState();
 }
 
-class _LogInCustomState extends State<Step1Custom> {
+class _LogInCustomState extends State<BookingStep1Screen> {
   final _formkey = GlobalKey<FormState>();
   int? _id_card;
   String? _first_name;
   String? _last_name;
   String? _tel;
+   
+  UserProfileProvider _profile = UserProfileProvider();
+  final auth = FirebaseAuth.instance;
+  bool isLoading = false;
 
   @override
-  Widget build(BuildContext context) {
-    //รอรับค่ามาจาก Login Provider --> ProfileModel ซึ่งข้อมูลไม่ต้องกรอกใหม่เพื่ออำนวยความสะดวกให้แก่ผู้ใช้งาน
-    // context.read<UserProvider>().id_card = 1234567890123;
-    // context.read<UserProvider>().first_name = "รณชัย";
-    // context.read<UserProvider>().last_name = "จำศิล";
-    // context.read<UserProvider>().tel = "0623456789";
+  void initState() {
+    super.initState();
+    widget.controller.onSyncAuth.listen((bool syncState) => setState(() => isLoading = syncState));
+    _loadProfile();
+  }
 
-    return Form(
+  void _loadProfile() async{
+    var newProfile = await widget.controller.GetUserInfo(auth.currentUser!.email);
+    setState(()  {
+      _profile = newProfile;
+    });
+  }
+
+  Widget get body => isLoading
+      ? CircularProgressIndicator()
+      :Form(
       key: _formkey,
       child: Consumer<UserProvider>(builder: (context, form, child) {
         return Padding(
@@ -91,9 +93,7 @@ class _LogInCustomState extends State<Step1Custom> {
                 onSaved: (value) {
                   _id_card = int.parse(value!);
                 },
-                initialValue: (context.read<UserProvider>().id_card == null)
-                    ? ''
-                    : context.read<UserProvider>().id_card.toString(),
+                initialValue: _profile.cid//context.read<UserProfileProvider>().cid 
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -119,7 +119,7 @@ class _LogInCustomState extends State<Step1Custom> {
                 onSaved: (value) {
                   _first_name = value;
                 },
-                initialValue: context.read<UserProvider>().first_name,
+                initialValue: _profile.firstName//context.read<UserProvider>().first_name 
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -145,7 +145,7 @@ class _LogInCustomState extends State<Step1Custom> {
                 onSaved: (value) {
                   _last_name = value;
                 },
-                initialValue: context.read<UserProvider>().last_name,
+                initialValue: _profile.lastName//context.read<UserProfileProvider>().lastName 
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -179,7 +179,7 @@ class _LogInCustomState extends State<Step1Custom> {
                 onSaved: (value) {
                   _tel = value;
                 },
-                initialValue: context.read<UserProvider>().tel,
+                initialValue: _profile.tel//ontext.read<UserProfileProvider>().tel 
               ),
               Container(
                 margin: EdgeInsets.only(top: 280),
@@ -193,7 +193,6 @@ class _LogInCustomState extends State<Step1Custom> {
                   onPressed: () {
                     if (_formkey.currentState!.validate()) {
                       _formkey.currentState!.save();
-
                       //รับค่าจาก ProfileModel -> TextFormField -> BookingModel
                       context.read<BookingModel>().id_card = _id_card;
                       context.read<BookingModel>().first_name = _first_name;
@@ -214,6 +213,27 @@ class _LogInCustomState extends State<Step1Custom> {
           ),
         );
       }),
+    );
+
+  @override
+  Widget build(BuildContext context) {
+    //รอรับค่ามาจาก Login Provider --> ProfileModel ซึ่งข้อมูลไม่ต้องกรอกใหม่เพื่ออำนวยความสะดวกให้แก่ผู้ใช้งาน
+    // context.read<UserProvider>().id_card = 1234567890123;
+    //context.read<UserProvider>().first_name = _profile.firstName;
+    // context.read<UserProvider>().last_name = "จำศิล";
+    // context.read<UserProvider>().tel = "0623456789";
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'STEP 1 : ข้อมูลทั่วไป',
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.w700, color: iWhiteColor),
+        ),
+        backgroundColor: iBlueColor,
+      ),
+      body: Center(
+        child: SingleChildScrollView(child: body),
+      ),
     );
   }
 

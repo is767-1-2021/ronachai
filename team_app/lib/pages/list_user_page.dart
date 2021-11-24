@@ -1,77 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
-import 'package:icovid/models/user_class.dart';
+import 'package:icovid/controllers/user_controller.dart';
+import 'package:icovid/models/user_class_model.dart';
 import 'package:icovid/models/user_provider.dart';
+import 'package:icovid/services/user_service.dart';
 import 'package:provider/provider.dart';
 
 import 'add_user_page.dart';
+import 'bottom_nav_page.dart';
 import 'login_page.dart';
 
 class ListUser extends StatefulWidget {
+  var service = UserServices();
+  var controller;
+  ListUser() {
+    controller = UserController(service);
+  }
 
   @override
   _ListUserState createState() => _ListUserState();
 }
 
 class _ListUserState extends State<ListUser> {
+  List<User> _userList = List.empty();
+  bool isLoading = false;
 
   @override
-  Widget build(BuildContext context) {
-    List<User> _userList = [];
-    if (context.read<UserProvider>().userList != null) {
-      _userList = context.read<UserProvider>().userList;
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('รายชื่อผู้ใช้งาน'),
-        backgroundColor: iBlueColor,
-        automaticallyImplyLeading: false,
-        actions: [
-          // IconButton(
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => AddFormPage()),
-          //     );
-          //   },
-          //   icon: Icon(Icons.medication),
-          // ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddFormPage()),
-              );
-            },
-            icon: Icon(Icons.person_add),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LogInScreen()),
-              );
-            },
-            icon: Icon(Icons.logout),
-          ),
-        ],
-      ),
-      // body: ListView.separated(
-      //   padding: EdgeInsets.all(8.0),
-      //   itemCount: _userList.length,
-      //   itemBuilder: (context, index) {
-      //     return UserTile(
-      //       items: User(
-      //       name: '${_userList[index].name}',
-      //       username: '${_userList[index].username}',
-      //       position: '${_userList[index].position}',
-      //       roleName: '${_userList[index].roleName}'
-      //       )
-      //     );
-      //   },
-      //   separatorBuilder: (context, index) => Divider(),
-      // ),
-      body: ListView.builder(
+  void initState() {
+    super.initState();
+    widget.controller.onSync.listen((bool syncState) => setState(() => isLoading = syncState));
+    _getUsers();
+  }
+  void _getUsers() async {
+    var newUserList = await widget.controller.fecthUsers();
+    setState(() {
+      _userList   = newUserList;
+    });
+  }
+
+  Widget get body => isLoading
+      ? CircularProgressIndicator()
+      : ListView.builder(
         itemCount: _userList.length,
         itemBuilder: (context, int index) {
           //User data = provider.users[index];
@@ -112,7 +81,50 @@ class _ListUserState extends State<ListUser> {
             ),
           );
         },
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    List<User> _userList = [];
+    if (context.read<UserProvider>().userList != null) {
+      _userList = context.read<UserProvider>().userList;
+    }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('รายชื่อผู้ใช้งาน'),
+        backgroundColor: iBlueColor,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BottomNavScreen()),
+              );
+            },
+            icon: Icon(Icons.home_outlined),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddFormPage()),
+              );
+            },
+            icon: Icon(Icons.person_add),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LogInScreen()),
+              );
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
       ),
+      body: Center(child: body,)
     );
   }
 }
@@ -205,7 +217,7 @@ class UserDetail extends StatelessWidget {
                   borderSide: BorderSide(color: iBlueColor),
                 ),
               ),
-              initialValue: '${user.first_name} ${user.last_name}',
+              initialValue: '${user.firstName} ${user.lastName}',
             ),
             TextFormField(
               decoration: InputDecoration(

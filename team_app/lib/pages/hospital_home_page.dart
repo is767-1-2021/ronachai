@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'hospital_booking_list_page.dart';
+import 'hospital_booking_list.dart';
 import 'hospital_home_body_page.dart';
 import 'hospital_info_page.dart';
 
@@ -14,7 +14,7 @@ class HospitalHomeScreen extends StatefulWidget {
 class _HospitalHomeScreenState extends State<HospitalHomeScreen> {
   final List _screensHospital = [
     HospitalHomeBodyScreen(),
-    HospitalBookingList(),
+    HospitalBookingsList(),
     HostpitalInfoScreen(),
   ];
   int _currentIndexHospital = 0;

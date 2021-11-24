@@ -1,13 +1,13 @@
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/widgets/primary_button.dart';
-import 'package:icovid/widgets/reset_form.dart';
-
 import 'login_page.dart';
 
+TextEditingController Email = TextEditingController();
+
 class ResetPasswordScreen extends StatelessWidget {
-  const ResetPasswordScreen({Key? key}) : super(key: key);
+  //const ResetPasswordScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +32,48 @@ class ResetPasswordScreen extends StatelessWidget {
                 height: 5,
               ),
               Text("กรุณาระบุอีเมล์"),
-              ResetForm(),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: TextFormField(
+                  controller: Email,
+                  decoration: InputDecoration(
+                    hintText: 'Email',
+                    hintStyle: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 40,
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  try {
+                    var FirebaseAuth;
+                    await FirebaseAuth.instance
+                        .sendPasswordResetEmail(email: Email.text);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('กรุณาไปตรวจสอบ ที่ Email ขอบคุณ')),
+                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LogInScreen()),
+                    );
+                  } on FirebaseAuthException catch (e) {
+                    print("error" + e.toString());
+                  }
+
+                  /*
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LogInScreen()),
                   );
+                  */
                 },
-                child: PrimaryButton(buttonText: "ตกลง",buttonColor: iBlueColor,),
+                child: PrimaryButton(
+                  buttonText: "ตกลง",
+                  buttonColor: iBlueColor,
+                ),
               ),
             ],
           ),

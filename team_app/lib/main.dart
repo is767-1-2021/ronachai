@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
 import 'package:icovid/controllers/booking_controller.dart';
 import 'package:icovid/models/booking_class_model.dart';
+import 'package:icovid/models/user_profile_provider.dart';
 import 'package:icovid/pages/login_page.dart';
 import 'package:icovid/services/booking_service.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +59,11 @@ void main() async {
           //ของแตง
           create: (context) => PatientFormModelHospitel(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => UserProfileProvider(),
+        ),
       ],
+       
       child: BookingApp(),
     ),
   );

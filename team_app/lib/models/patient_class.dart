@@ -4,7 +4,7 @@
   String? lastName;
   String? hospital;
   String? phone;
-  String? dateappointment;
+  String? checkindate;
   //May
 // int? id;
 //   String? pid;
@@ -14,6 +14,6 @@
 //   String? hAddress;
 //   String? hTel;
 //   String? hBed;
-    Patient ({this.idCard, this.firstName, this.lastName, this.phone,this.dateappointment, this.hospital, this.checkin, this.checkout});
+    Patient ({this.idCard, this.firstName, this.lastName, this.phone,this.checkindate, this.hospital, this.checkin, this.checkout});
 }
 // 

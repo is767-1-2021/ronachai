@@ -5,6 +5,8 @@ import 'package:icovid/pages/booking_step1_page.dart';
 import 'package:icovid/pages/login_page.dart';
 import 'package:icovid/pages/qr_scan_page.dart';
 
+import 'bottom_nav_page.dart';
+
 class HospitalHomeBodyScreen extends StatefulWidget {
   const HospitalHomeBodyScreen({Key? key}) : super(key: key);
 
@@ -21,9 +23,13 @@ class _HospitalHomeBodyScreenState extends State<HospitalHomeBodyScreen> {
         backgroundColor: Color(0xFF473F97),
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Icons.person_outline),
+          icon: Icon(Icons.home_outlined),
           iconSize: 30.0,
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context,
+              MaterialPageRoute(builder: (context)=> BottomNavScreen())
+            );
+          },
         ),
         actions: [
           IconButton(

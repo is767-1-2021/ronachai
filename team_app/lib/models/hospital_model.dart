@@ -5,7 +5,7 @@ import 'hospital_clas.dart';
 class HospitalFormModel extends ChangeNotifier {
   String? _hospitalName;
   String? _addressName;
-  int? _phoneNumber;
+  String? _phoneNumber;
   int? _numberPatient;
   int? _numberStaff;
   int? _avaliableQueue;

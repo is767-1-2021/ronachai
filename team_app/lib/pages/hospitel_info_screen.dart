@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:icovid/constants/color_constant.dart';
-import 'package:icovid/controllers/hospital_controller.dart';
+import 'package:icovid/controllers/hospitel_info_controller.dart';
 import 'package:icovid/models/hospital_model.dart';
 import 'package:icovid/models/hospital_clas.dart';
+import 'package:icovid/models/hospitel_info_class.dart';
 import 'package:icovid/pages/hospital_home_page.dart';
 import 'package:icovid/services/hospital_service.dart';
+import 'package:icovid/services/hospitel_info_service.dart';
 import 'package:provider/provider.dart';
 
 import 'login_page.dart';
+import 'patient_list_page.dart';
 
-class HostpitalInfoScreen extends StatefulWidget {
+class HostpitelInfoScreen extends StatefulWidget {
   @override
-  _HostpitalInfoScreenState createState() => _HostpitalInfoScreenState();
+  _HostpitelInfoScreenState createState() => _HostpitelInfoScreenState();
 }
 
-class _HostpitalInfoScreenState extends State<HostpitalInfoScreen> {
+class _HostpitelInfoScreenState extends State<HostpitelInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ข้อมูลโรงพยาบาล'),
+        title: Text('ข้อมูลโรงพยาบาลสนาม'),
         backgroundColor: iBlueColor,
         actions: [
           IconButton(
@@ -34,29 +37,29 @@ class _HostpitalInfoScreenState extends State<HostpitalInfoScreen> {
           ),
         ],
       ),
-      body: HostpitalInfoState(),
+      body: HostpitelInfoState(),
     );
   }
 }
 
-class HostpitalInfoState extends StatefulWidget {
+class HostpitelInfoState extends StatefulWidget {
   @override
-  _HostpitalInfoState createState() => _HostpitalInfoState();
+  _HostpitelInfoState createState() => _HostpitelInfoState();
 }
 
-class _HostpitalInfoState extends State<HostpitalInfoState> {
+class _HostpitelInfoState extends State<HostpitelInfoState> {
   final _formKey = GlobalKey<FormState>();
-  int? _hospitalNumber;
-  String? _hospitalName;
+  int? _hospitelNumber;
+  String? _hospitelName;
   String? _addressName;
   String? _phoneNumber;
   int? _numberPatient;
   int? _numberStaff;
   int listLength = 0;
-  var service = HospitalServices();
+  var service = HospitelInfoServices();
   var controller;
-  _HostpitalInfoState() {
-    controller = HospitalController(service);
+  _HostpitelInfoState() {
+    controller = HospitelInfoController(service);
   }
 
   @override
@@ -87,7 +90,7 @@ class _HostpitalInfoState extends State<HostpitalInfoState> {
                 return null;
               },
               onSaved: (value) {
-                _hospitalNumber = int.parse(value!);
+                _hospitelNumber = int.parse(value!);
               },
               initialValue: context.read<HospitalFormModel>().hospitalName,
             ),
@@ -105,7 +108,7 @@ class _HostpitalInfoState extends State<HostpitalInfoState> {
                 return null;
               },
               onSaved: (value) {
-                _hospitalName = value;
+                _hospitelName = value;
               },
               initialValue: context.read<HospitalFormModel>().hospitalName,
             ),
@@ -190,7 +193,7 @@ class _HostpitalInfoState extends State<HostpitalInfoState> {
               initialValue: context.read<HospitalFormModel>().avaliableQueue == null?'':context.read<HospitalFormModel>().avaliableQueue.toString(),
             ),
             Container(
-              margin: EdgeInsets.only(top: 200),
+              margin: EdgeInsets.only(top: 250),
               width: MediaQuery.of(context).size.width,
               child: FlatButton(
                 shape: new RoundedRectangleBorder(
@@ -203,7 +206,7 @@ class _HostpitalInfoState extends State<HostpitalInfoState> {
                     _formKey.currentState!.save();
                     _formKey.currentState!.save();
                       context.read<HospitalFormModel>().hospitalName =
-                          _hospitalName;
+                          _hospitelName;
                       context.read<HospitalFormModel>().addressName =
                           _addressName;
                       context.read<HospitalFormModel>().phoneNumber =
@@ -218,16 +221,16 @@ class _HostpitalInfoState extends State<HostpitalInfoState> {
                       context.read<HospitalFormModel>().hospitalId =listLength + 1;
 
                       //add to firebase
-                      controller.addhospitalInfo(new BHospital(_hospitalNumber!, _hospitalName!, _addressName!, _phoneNumber!, _numberPatient!, _numberStaff!, _numberPatient!));
+                      controller.addhospitelInfo(new BHospitel(_hospitelNumber!, _hospitelName!, _addressName!, _phoneNumber!, _numberPatient!, _numberStaff!));
 
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => HospitalHomeScreen()));
+                              builder: (context) => PatientListPage()));
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                             content: Text(
-                                'บันทีกข้อมูลโรงพยาบาลของเท่านเรียบร้อยแล้ว')),
+                                'บันทีกข้อมูลโรงพยาบาลสนามของเท่านเรียบร้อยแล้ว')),
                       );
                    
                   }

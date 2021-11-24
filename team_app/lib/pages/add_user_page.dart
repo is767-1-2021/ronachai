@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
-import 'package:icovid/data/data.dart';
+import 'package:icovid/controllers/booking_controller.dart';
+import 'package:icovid/controllers/user_controller.dart';
 import 'package:icovid/models/hospital_clas.dart';
-import 'package:icovid/models/user_class.dart';
+import 'package:icovid/models/user_class_model.dart';
+
 import 'package:icovid/models/user_provider.dart';
+import 'package:icovid/services/booking_service.dart';
+import 'package:icovid/services/user_service.dart';
 import 'package:provider/provider.dart';
 import 'list_user_page.dart';
 import 'login_page.dart';
@@ -15,18 +19,24 @@ class AddFormPage extends StatefulWidget {
 
 class _AddFormPageState extends State<AddFormPage> {
   final formKey = GlobalKey<FormState>();
+  List<BHospital> hospitalList = List.empty();
+ var service = BookingServices();
+ var controller;
+  _AddFormPageState() {
+    controller = BookingController(service);
+  }
 
   UserRole? _selectUserRole;
-  Hospital? _selectHospitel;
-  String? _email;
-  String? _firstName;
-  String? _lastName;
-  String? _position;
-  String? _password;
-  int? _roleId;
-  String? _roleName;
-  int? _hospitalId;
-  String? _hospitalName;
+  BHospital? _selectHospitel;
+  String _email="";
+  String _firstName="";
+  String _lastName="";
+  String _position="";
+  String _password="";
+  int _roleId = 0;
+  String _roleName = "";
+  int _hospitalId = 0;
+  String _hospitalName="";
 
   // final usernameController = TextEditingController();
 
@@ -49,6 +59,15 @@ class _AddFormPageState extends State<AddFormPage> {
   ];
 
   @override
+  void initState() {
+    _getHospitalList();
+  }
+
+  void _getHospitalList() async {
+    hospitalList = await controller.fecthHospitalList();
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<DropdownMenuItem<UserRole>> items = roleList.map((item) {
       return DropdownMenuItem<UserRole>(
@@ -56,12 +75,13 @@ class _AddFormPageState extends State<AddFormPage> {
         value: item,
       );
     }).toList();
-    List<DropdownMenuItem<Hospital>> hospitalItems = hostpitalListData.map((item) {
-      return DropdownMenuItem<Hospital>(
-        child: Text(item.hospitalName!),
-        value: item,
-      );
-    }).toList();
+    // List<DropdownMenuItem<Hospital>> hospitalItems =
+    //     hostpitalListData.map((item) {
+    //   return DropdownMenuItem<Hospital>(
+    //     child: Text(item.hospitalName!),
+    //     value: item,
+    //   );
+    // }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -101,7 +121,7 @@ class _AddFormPageState extends State<AddFormPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  _email = value;
+                  _email = value!;
                 },
               ),
               TextFormField(
@@ -118,7 +138,7 @@ class _AddFormPageState extends State<AddFormPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  _firstName = value;
+                  _firstName = value!;
                 },
               ),
               TextFormField(
@@ -135,7 +155,7 @@ class _AddFormPageState extends State<AddFormPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  _lastName = value;
+                  _lastName = value!;
                 },
               ),
               TextFormField(
@@ -151,7 +171,7 @@ class _AddFormPageState extends State<AddFormPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  _position = value;
+                  _position = value!;
                 },
               ),
               TextFormField(
@@ -168,7 +188,7 @@ class _AddFormPageState extends State<AddFormPage> {
                   return null;
                 },
                 onSaved: (value) {
-                  _password = value;
+                  _password = value!;
                 },
               ),
               Container(
@@ -226,7 +246,7 @@ class _AddFormPageState extends State<AddFormPage> {
               ),
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: DropdownButton<Hospital>(
+                child: DropdownButton<BHospital>(
                     isExpanded: true,
                     value: _selectHospitel,
                     style: TextStyle(color: iBlueColor),
@@ -237,11 +257,18 @@ class _AddFormPageState extends State<AddFormPage> {
                     onChanged: (newValue) {
                       setState(() {
                         _selectHospitel = newValue;
-                        _hospitalId = newValue!.hospitalId;
-                        _hospitalName = newValue.hospitalName;
+                        _hospitalId = newValue!.hospital_number;
+                        _hospitalName = newValue.hospital_name;
                       });
                     },
-                    items: hospitalItems),
+                    items: hospitalList
+                    .map<DropdownMenuItem<BHospital>>((BHospital value) {
+                  return DropdownMenuItem<BHospital>(
+                    value: value,
+                    child: Text(value.hospital_name),
+                  );
+                }).toList(),
+                    ),
               ),
               Container(
                 margin: EdgeInsets.only(top: 10.0),
@@ -252,6 +279,7 @@ class _AddFormPageState extends State<AddFormPage> {
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
                           formKey.currentState!.save();
+                          
 
                           if (_roleId == 0 || _roleName == null) {
                             _showDialog(context, 'กรุณาเลือกประเภทผู้ใช้งาน');
@@ -262,17 +290,22 @@ class _AddFormPageState extends State<AddFormPage> {
                               listUser = context.read<UserProvider>().userList;
                             }
 
-                            listUser.add(User(
-                                email: _email,
-                                first_name: _firstName,
-                                last_name: _lastName,
-                                password: _password,
-                                position: _position,
-                                roleId: _roleId,
-                                roleName: _roleName,
-                                hospitalId: _hospitalId,
-                                hospitalName: _hospitalName));
-                            context.read<UserProvider>().userList = listUser;
+                            //Add to State
+                            //listUser.add(User(_firstName!, _lastName!, _email!, _password!, _position!, _roleId!, _roleName!, _hospitalId!, _hospitalName!));
+
+                            //   listUser.add(User());
+                            //       
+
+
+                            //add to firebase
+                                          var service = UserServices();
+                                          UserController controller = UserController(service);
+                                          if(_roleId == null){
+                                              _roleId = 0;
+                                          }
+                                          controller.addUser(new User(_firstName, _lastName, _email, _password, _position, _roleId, _roleName, _hospitalId, _hospitalName));
+
+                            //context.read<UserProvider>().userList = listUser;
                             _showDialog(
                                 context, 'คุณได้เพิ่มผู้ใช้งานเรียบร้อยแล้ว');
                           }

@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:icovid/models/booking_class_model.dart';
 import 'package:icovid/models/hospital_clas.dart';
 
-abstract class BookingServices {
+abstract class ABooking {
   Future<List<Booking>> getBookingsById(String idCardNumber);
+  Future<List<Booking>> getBookingsByHospitalNumber(int hospitalNumber);
   Future<void> addBooking(Booking items);
   Future<List<BHospital>> getHospitalList();
   Future<void> updateAvaliableQueue(int hospitalNumber, int avaliableQueue);
@@ -12,15 +13,28 @@ abstract class BookingServices {
   Future<BHospital> getCurrentQueue(int hospitalNumber);
 }
 
-class FirebaseServices extends BookingServices {
-  CollectionReference _ref =
-      FirebaseFirestore.instance.collection('icovid_booking');
+class BookingServices extends ABooking {
+  CollectionReference _ref = FirebaseFirestore.instance.collection('icovid_booking');
 
   @override
   Future<List<Booking>> getBookingsById(String idCardNumber) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('icovid_booking')
         .where('idCardNumber', isEqualTo: idCardNumber)
+        .where('isActive', isEqualTo: true)
+        .orderBy('bookingNumber', descending: false)
+        .get();
+
+    AllBookings bookings = AllBookings.fromSnapshot(snapshot);
+    return bookings.bookings;
+  }
+
+  @override
+  Future<List<Booking>> getBookingsByHospitalNumber(int hospitalNumber) async {
+    print('hospitalNumber:${hospitalNumber}');
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('icovid_booking')
+        .where('hospitalNumber', isEqualTo: hospitalNumber)
         .where('isActive', isEqualTo: true)
         .orderBy('bookingNumber', descending: false)
         .get();
@@ -39,7 +53,8 @@ class FirebaseServices extends BookingServices {
       'idCardNumber': items.idCardNumber,
       'bookingNumber': items.bookingNumber,
       'hospitalNumber': items.hospitalNumber,
-      'isActive': true
+      'isActive': true,
+      'createDate':DateTime.now()
     });
     //.then((value) => print('Booking Added'))
     //.catchError((error) => print("Failed to add Booking: $error"));
@@ -68,6 +83,8 @@ class FirebaseServices extends BookingServices {
 
   @override
   Future<void> cancelQueue(int hospitalNumber, int newQueueNumber) async {
+    print('hospitalNumber:${hospitalNumber}');
+    print('newQueueNumber:${newQueueNumber}');
     CollectionReference _ref = FirebaseFirestore.instance.collection('icovid_hospital');
     FirebaseFirestore.instance
         .collection('icovid_hospital')
@@ -97,7 +114,11 @@ class FirebaseServices extends BookingServices {
 
   @override
   Future<BHospital> getCurrentQueue(int hospitalNumber) async {
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('icovid_hospital').get();
+    QuerySnapshot snapshot = await FirebaseFirestore
+    .instance
+    .collection('icovid_hospital')
+    .where('hospital_number',isEqualTo: hospitalNumber)
+    .get();
     SingleHospital hospital = SingleHospital.fromJson(snapshot);
     return hospital.hospital;
   }

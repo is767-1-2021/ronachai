@@ -1,28 +1,28 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-
-import 'patient_class_hospitel.dart';
+import 'package:icovid/pages/hospital_booking_list.dart';
 
 class PatientFormModelHospitel with ChangeNotifier {
   int? idCard;
   String? firstName;
   String? lastName;
   String? hospital;
+  String? hospitel;
   String? phone;
-  String? dateappointment;
-  TimeOfDay? timeappointment;
-  //May
-int? id;
-  String? pid;
-  String? checkin;
-  String? checkout;
-  String? hName;
-  String? hAddress;
-  String? hTel;
-  String? hBed;
+  String? checkindate;
+//   TimeOfDay? timeappointment;
+//   //May
+// int? id;
+//   String? pid;
+//   String? checkin;
+//   String? checkout;
+//   String? hName;
+//   String? hAddress;
+//   String? hTel;
+//   String? hBed;
   
-List<PatientHospitel>? _patientList;
+List<BookingHospitelItem>? _patientList;
 
  get getidCard => this.idCard;
 
@@ -51,6 +51,14 @@ List<PatientHospitel>? _patientList;
     notifyListeners();
   }
 
+
+   get gethospitel => this.hospitel;
+
+  set sethospitel(hospitel) {
+    this.hospitel = hospitel;
+    notifyListeners();
+  }
+
   get getphone => this.phone;
 
   set setphone(phone) {
@@ -58,27 +66,27 @@ List<PatientHospitel>? _patientList;
     notifyListeners();
   }
 
- get getdateappointment => this.dateappointment;
+ get getdatecheckindate => this.checkindate;
 
-  set setdateappointment(dateappointment) {
-    this.dateappointment = dateappointment;
+  set setdatecheckindate(checkindate) {
+    this.checkindate = checkindate;
     notifyListeners();
   }
    
 
-  get getcheckin => this.checkin;
+  // get getcheckin => this.checkin;
 
-  set setcheckin(checkin) {
-    this.checkin = checkin;
-    notifyListeners();
-  }
+  // set setcheckin(checkin) {
+  //   this.checkin = checkin;
+  //   notifyListeners();
+  // }
 
-  get getcheckout => this.checkout;
+  // get getcheckout => this.checkout;
 
-  set setcheckout(checkout) {
-    this.checkout = checkout;
-    notifyListeners();
-  }
+  // set setcheckout(checkout) {
+  //   this.checkout = checkout;
+  //   notifyListeners();
+  // }
   
   get patientList => this._patientList;
 
@@ -87,42 +95,34 @@ List<PatientHospitel>? _patientList;
     notifyListeners();
   }
 
-  final List<PatientHospitel> _item = [];
+  final List<BookingHospitelItem> _item = [];
 
-  UnmodifiableListView<PatientHospitel> get items => UnmodifiableListView(_item);
+  UnmodifiableListView<BookingHospitelItem> get items => UnmodifiableListView(_item);
 
-  List<PatientHospitel> getPatientList() {
+  List<BookingHospitelItem> getPatientList() {
     return _item;
   }
 
-  void AddPatientList(PatientHospitel item) {
+  void AddPatientList(BookingHospitelItem item) {
     _item.add(item);
     notifyListeners();
   }
 
 
-  List<PatientHospitel> Patients = [
-    PatientHospitel(
-      idCard: 111,
-        firstName: "ronnachia@gmail.com",
-        lastName: "Ronnachia Jumsil",
-        phone: "Admin",
-      
-    ),
-  ];
-List<PatientHospitel> getPatient() {
-    return Patients;
+
+// List<PatientHospitel> getPatient() {
+//     return Patients;
+//   }
+
+//   void addUser(BookingHospitelItem statement) {
+//     Patients.add(statement);
+
+//     //users.insert(0, statement); เพิ่มด้านบน
+//     //users.add(statement); เพิ่มด้านล่าง
+//     notifyListeners();
+// // แจ้ง consumer
   }
 
-  void addUser(PatientHospitel statement) {
-    Patients.add(statement);
-
-    //users.insert(0, statement); เพิ่มด้านบน
-    //users.add(statement); เพิ่มด้านล่าง
-    notifyListeners();
-// แจ้ง consumer
-  }
-}
 
 
   // void RemoveUserList(Patient item) {

@@ -1,19 +1,111 @@
 import 'dart:collection';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:icovid/pages/hospital_booking_list.dart';
 
 import 'patient_class.dart';
 
+class BookingHospitel {
+  final int idcard;
+  final String fullname;
+  final String phone;
+  final String hospital;
+  final String checkindate;
+  final String hospitel;
+  final String startdateadmit;
+  final String enddateadmit;
+  final String status;
+
+  BookingHospitel(this.idcard, this.fullname, this.phone,this.hospital,this.checkindate,this.hospitel,
+      this.startdateadmit, this.enddateadmit, this.status);
+  factory BookingHospitel.fromDs(
+    Map<String, Object?> json,
+  ) {
+    return BookingHospitel(
+      json['idcard'] as int,
+      json['fullname'] as String,
+      json['phone'] as String,
+      json['hospital'] as String,
+      json['checkindate'] as String,
+      json['hospitel'] as String,
+      json['startdateadmit'] as String,
+      json['enddateadmit'] as String,
+      json['status'] as String,
+    );
+  }
+}
+class AllBookingHospitel {
+  final List<BookingHospitel> bookings;
+  AllBookingHospitel(this.bookings);
+
+  factory AllBookingHospitel.fromSnapshot(QuerySnapshot s) {
+    List<BookingHospitel> bookingsHospitel = s.docs.map((DocumentSnapshot ds) {
+      return BookingHospitel.fromDs(ds.data() as Map<String, dynamic>);
+    }).toList();
+    return AllBookingHospitel(bookingsHospitel);
+  }
+}
+
+
+
+// CheckinList
+
+class BookingHospitelList {
+   String hospitalName;
+  String checkDate;
+  String result;
+  String fullName;
+  int hospitalNumber;
+  String idCardNumber;
+  int bookingNumber;
+ 
+
+  BookingHospitelList(this.hospitalName, this.checkDate, this.result, this.fullName,
+      this.hospitalNumber, this.idCardNumber, this.bookingNumber);
+
+  factory BookingHospitelList.fromDs(
+    Map<String, Object?> json,
+  ) {
+    return BookingHospitelList(
+      json['hospitalName'] as String,
+      json['checkDate'] as String,
+      json['result'] as String,
+      json['fullName'] as String,
+      json['hospitalNumber'] as int,
+      json['idCardNumber'] as String,
+      json['bookingNumber'] as int,
+    );
+  }
+}
+
+class AllBookingHospitelList {
+  final List<BookingHospitelList> bookings;
+  AllBookingHospitelList(this.bookings);
+
+  factory AllBookingHospitelList.fromSnapshot(QuerySnapshot s) {
+    List<BookingHospitelList> bookingsHospitel = s.docs.map((DocumentSnapshot ds) {
+      return BookingHospitelList.fromDs(ds.data() as Map<String, dynamic>);
+    }).toList();
+    return AllBookingHospitelList(bookingsHospitel);
+  }
+}
+
+
 class PatientFormModel with ChangeNotifier {
+  // ใช้อันนี้
   int? idCard;
   String? firstName;
   String? lastName;
   String? hospital;
+  String? hospitel;
   String? phone;
-  String? dateappointment;
-  TimeOfDay? timeappointment;
+  String? checkindate;
+  String? startdateadmit;
+  String? enddateadmit;
+  String? status;
+  //TimeOfDay? timeappointment;
   //May
-int? id;
+  int? id;
   String? pid;
   String? checkin;
   String? checkout;
@@ -21,28 +113,29 @@ int? id;
   String? hAddress;
   String? hTel;
   String? hBed;
-  
-List<Patient>? _patientList;
 
- get getidCard => this.idCard;
+  //List<BookingHospitelItem>? _patientList;
+
+  get getidCard => this.idCard;
 
   set setidCard(idCard) {
     this.idCard = idCard;
     notifyListeners();
-  } 
+  }
+
   get getfirstName => this.firstName;
 
   set setfirstName(firstName) {
     this.firstName = firstName;
     notifyListeners();
-  } 
+  }
 
   get getlastName => this.lastName;
 
   set getlastName(lastName) {
     this.lastName = lastName;
     notifyListeners();
-  } 
+  }
 
   get gethospital => this.hospital;
 
@@ -58,13 +151,12 @@ List<Patient>? _patientList;
     notifyListeners();
   }
 
- get getdateappointment => this.dateappointment;
+  get getcheckindate => this.checkindate;
 
-  set setdateappointment(dateappointment) {
-    this.dateappointment = dateappointment;
+  set setcheckindate(checkindate) {
+    this.checkindate = checkindate;
     notifyListeners();
   }
-   
 
   get getcheckin => this.checkin;
 
@@ -79,38 +171,58 @@ List<Patient>? _patientList;
     this.checkout = checkout;
     notifyListeners();
   }
-  
-  get patientList => this._patientList;
 
-  set patientList(value) {
-    this._patientList = value;
+  get getstartdateadmit => this.startdateadmit;
+
+  set setstartdateadmit(startdateadmit) {
+    this.startdateadmit = startdateadmit;
     notifyListeners();
   }
 
-  final List<Patient> _item = [];
+  get getenddateadmit => this.enddateadmit;
 
-  UnmodifiableListView<Patient> get items => UnmodifiableListView(_item);
+  set setenddateadmit(enddateadmit) {
+    this.enddateadmit = enddateadmit;
+    notifyListeners();
+  }
 
-  List<Patient> getPatientList() {
+    get getstatus => this.status;
+
+  set setstatus(status) {
+    this.status = status;
+    notifyListeners();
+  }
+
+
+  // get patientList => this._patientList;
+
+  // set patientList(value) {
+  //   this._patientList = value;
+  //   notifyListeners();
+  // }
+
+  final List<BookingHospitelItem> _item = [];
+
+  UnmodifiableListView<BookingHospitelItem> get items => UnmodifiableListView(_item);
+
+  List<BookingHospitelItem> getBookingHospitelList() {
     return _item;
   }
 
-  void AddPatientList(Patient item) {
+  void AddPatientList(BookingHospitelItem item) {
     _item.add(item);
     notifyListeners();
   }
 
-
   List<Patient> Patients = [
     Patient(
       idCard: 111,
-        firstName: "ronnachia@gmail.com",
-        lastName: "Ronnachia Jumsil",
-        phone: "Admin",
-      
+      firstName: "ronnachia@gmail.com",
+      lastName: "Ronnachia Jumsil",
+      phone: "Admin",
     ),
   ];
-List<Patient> getPatient() {
+  List<Patient> getPatient() {
     return Patients;
   }
 

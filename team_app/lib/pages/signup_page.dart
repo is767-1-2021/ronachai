@@ -1,13 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
-import 'package:icovid/models/user_class.dart';
-import 'package:icovid/models/user_provider.dart';
+import 'package:icovid/controllers/auth_controller.dart';
+import 'package:icovid/models/resule_model.dart';
+import 'package:icovid/services/auth_service.dart';
 import 'package:icovid/widgets/checkbox.dart';
 import 'package:icovid/widgets/primary_button.dart';
 import 'package:icovid/widgets/signup_form.dart';
-import 'package:provider/provider.dart';
-
 import 'login_page.dart';
+
+FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -24,6 +27,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController _phon = TextEditingController();
   TextEditingController _password = TextEditingController();
   TextEditingController _Confirpassword = TextEditingController();
+  var service = AuthService();
+  var controller;
+  _SignUpScreenState() {
+    controller = AuthController(service);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,16 +80,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 height: 15,
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   //CheckValueSignUp(_formKey, context, password, _Confirpassword);
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     if (_Confirpassword.text == _password.text) {
+                      try {
+                        Result result = await controller.RegisLogin(_firstName.text, _lastName.text,
+                            _email.text, _cid.text, _phon.text, _password.text);
+                        if(result.result){
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'ลงทะเบียนเรียบร้อยเเล้ว ให้ log in อีกครั้งเพื่อเข้าใช้งาน')),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LogInScreen()),
+                          );
+                        }else{
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text(result.msg)),
+                          );
+                        }
+                        
+                      } catch (e) {
+                        print("ขออภัยไม่สามารถเพิ่มข้อมูลผู้ใช้งานได้กรุณาลองใหม่อีกครั้ง");
+                      }
+                      /*
                       List<User> listUser = [];
                       if (context.read<UserProvider>().userList != null) {
                         listUser = context.read<UserProvider>().userList;
                       }
-
+                      
                       listUser.add(User(
                           id_card: int.tryParse(_cid.text),
                           first_name: _firstName.text,
@@ -111,6 +145,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         context,
                         MaterialPageRoute(builder: (context) => LogInScreen()),
                       );
+                      */
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -135,6 +170,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
+
+// RegisLogin(String firstname, String lastname, String email, String cid,
+//     String tel, String password) async {
+//   try {
+//     UserCredential userCredential = await FirebaseAuth.instance
+//         .createUserWithEmailAndPassword(email: email, password: password);
+//   } on FirebaseAuthException catch (e) {
+//     if (e.code == 'weak-password') {
+//       print('The password provided is too weak.');
+//     } else if (e.code == 'email-already-in-use') {
+//       print('The account already exists for that email.');
+//     }
+//   } catch (e) {
+//     print(e);
+//   }
+
+//   await _firestore
+//       .collection("icovid_user")
+//       .add({
+//         'firstname': firstname,
+//         'lastname': lastname,
+//         'email': email,
+//         'cid': cid,
+//         'tel': tel,
+//         'password': password,
+//         'roleID': 2,
+//       })
+//       .then((value) => print("User Add"))
+//       .catchError((error) => print("Failed to add user: $error"));
+// }
 
 void CheckValueSignUp(_formKey, context, TextEditingController password,
     TextEditingController _Confirpassword) {

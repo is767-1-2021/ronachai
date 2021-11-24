@@ -1,17 +1,25 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:icovid/constants/color_constant.dart';
+import 'package:icovid/controllers/auth_controller.dart';
 import 'package:icovid/controllers/booking_controller.dart';
 import 'package:icovid/models/booking_provider_model.dart';
 import 'package:icovid/models/booking_class_model.dart';
+import 'package:icovid/models/user_profile_provider.dart';
 import 'package:icovid/pages/login_page.dart';
+import 'package:icovid/services/auth_service.dart';
 import 'package:icovid/services/booking_service.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookingListcreen extends StatefulWidget {
-  var service = FirebaseServices();
+  var service = BookingServices();
+  var authService = AuthService();
   var controller;
+  var authController;
   BookingListcreen() {
     controller = BookingController(service);
+    authController = AuthController(authService);
   }
 
   @override
@@ -21,16 +29,23 @@ class BookingListcreen extends StatefulWidget {
 class _BookingListcreenState extends State<BookingListcreen> {
   List<Booking> _bookingList = [];
   bool isLoading = false;
-  String id_card_test = "1111111111111";
+  UserProfileProvider _profile = UserProfileProvider();
+  final auth = FirebaseAuth.instance;
+  //final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  String? id_card="1111111111111";
 
   @override
   void initState() {
     super.initState();
     widget.controller.onSync.listen((bool syncState) => setState(() => isLoading = syncState));
+    widget.authController.onSyncAuth.listen((bool syncState) => setState(() => isLoading = syncState));
   }
 
   void _getBookings(BuildContext context) async {
-    var bookingList = await widget.controller.fecthBookings(id_card_test);
+    // final SharedPreferences prefs = await _prefs;
+    // String a = prefs.getString('id_card')?? '';
+    // print('a--->${a}');
+    var bookingList = await widget.controller.fecthMyBookings(id_card);
     setState(() {
         context.read<BookingProvider>().bookingList = bookingList;
     });
@@ -38,9 +53,17 @@ class _BookingListcreenState extends State<BookingListcreen> {
 
   void _cancelQueue(String idCardNumber, int bookingNumber, int hopitalNumber,BuildContext context) async {
     await widget.controller.cancelQueue(idCardNumber, bookingNumber, hopitalNumber);
-    var bookingList = await widget.controller.fecthBookings(id_card_test);
+    var bookingList = await widget.controller.fecthMyBookings(id_card);
     setState(() {
       context.read<BookingProvider>().bookingList = bookingList;
+    });
+  }
+
+   void _loadProfile() async{
+    var newProfile = await widget.controller.GetUserInfo(auth.currentUser!.email);
+    setState(()  {
+      _profile = newProfile;
+      id_card = _profile.cid;
     });
   }
 
