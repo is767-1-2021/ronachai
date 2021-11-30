@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "934937543686",
+    "project_id": "is767-2021-ronachai",
+    "storage_bucket": "is767-2021-ronachai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934937543686:android:f7fe68c4084af540e9ef87",
+        "android_client_info": {
+          "package_name": "com.example.final_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "934937543686-66vpbroaudlf4c0fl2e4i6m3b9228dh8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3McWoNE9K5zg1_5TtNnyltIiNb594VSE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "934937543686-66vpbroaudlf4c0fl2e4i6m3b9228dh8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
