@@ -223,6 +223,7 @@ class _MyHomePageState extends State<CalculatorPage> {
   @override
   void initState() {
     super.initState();
+    widget.controller.onSync.listen((bool syncState) => setState(() => isLoading = syncState));
     _getHistory();
   }
 
